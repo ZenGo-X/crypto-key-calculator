@@ -12,6 +12,7 @@ function App() {
   const [keyProbabilitiesUpdatedTable, setKeyProbabilitiesUpdatedTable] = useState({});
   const [wallet, setWallet] = useState([]);
   const keyStates = ['safe', 'leaked', 'lost', 'stolen'];
+  const floatingPrecision = 8;
   const [combinationToAdd, setCombinationToAdd] = useState([]);
   const [selectedKeyForCombination, setSelectedKeyForCombination] = useState(-1);
   const [isEditingProbabilities, setIsEditingProbabilities] = useState(false);
@@ -23,15 +24,15 @@ function App() {
     });
   }
 
-  function updateKeyProbabilities(state, index, probability) {
-    keyProbabilitiesUpdatedTable[state][index] = probability;
+  function updateKeyProbabilities(state, index, percent) {
+    keyProbabilitiesUpdatedTable[state][index] = percent / 100;
     setKeyProbabilitiesUpdatedTable(keyProbabilitiesUpdatedTable);
   }
 
   function toggleEditingMode() {
     if (isEditingProbabilities) {
       for (let i = 0; i < keyNum; i++) {
-        if (parseFloat((keyProbabilitiesUpdatedTable.safe[i] + keyProbabilitiesUpdatedTable.leaked[i] + keyProbabilitiesUpdatedTable.lost[i] + keyProbabilitiesUpdatedTable.stolen[i]).toFixed(8)) != 1) {
+        if (parseFloat((keyProbabilitiesUpdatedTable.safe[i] + keyProbabilitiesUpdatedTable.leaked[i] + keyProbabilitiesUpdatedTable.lost[i] + keyProbabilitiesUpdatedTable.stolen[i]).toFixed(floatingPrecision)) != 1) {
           console.log("ERROR not 1");
           return;
         }
@@ -45,26 +46,30 @@ function App() {
     setIsEditingProbabilities(!isEditingProbabilities);
   }
 
+  function toPercent(probability) {
+    return parseFloat((probability * 100).toFixed(floatingPrecision)).toString() + ' %';
+  }
+
   function renderKeyProbInputRow(index) {
     if (isEditingProbabilities) {
       return (
         <tr key={index}>
-          <td>{index}</td>
-          <td><input type="number" defaultValue={keyProbabilityTable.safe[index]} onChange={(event) => updateKeyProbabilities('safe', index, parseFloat(event.target.value))} /></td>
-          <td><input type="number" defaultValue={keyProbabilityTable.leaked[index]} onChange={(event) => updateKeyProbabilities('leaked', index, parseFloat(event.target.value))} /></td>
-          <td><input type="number" defaultValue={keyProbabilityTable.lost[index]} onChange={(event) => updateKeyProbabilities('lost', index, parseFloat(event.target.value))} /></td>
-          <td><input type="number" defaultValue={keyProbabilityTable.stolen[index]} onChange={(event) => updateKeyProbabilities('stolen', index, parseFloat(event.target.value))} /></td>
+          <td>{index + 1}</td>
+          <td><input type="number" defaultValue={keyProbabilityTable.safe[index] * 100} onChange={(event) => updateKeyProbabilities('safe', index, parseFloat(event.target.value))} /> %</td>
+          <td><input type="number" defaultValue={keyProbabilityTable.leaked[index] * 100} onChange={(event) => updateKeyProbabilities('leaked', index, parseFloat(event.target.value))} /> %</td>
+          <td><input type="number" defaultValue={keyProbabilityTable.lost[index] * 100} onChange={(event) => updateKeyProbabilities('lost', index, parseFloat(event.target.value))} /> %</td>
+          <td><input type="number" defaultValue={keyProbabilityTable.stolen[index] * 100} onChange={(event) => updateKeyProbabilities('stolen', index, parseFloat(event.target.value))} /> %</td>
         </tr>
       );
     }
     else {
       return (
         <tr key={index}>
-          <td>{index}</td>
-          <td>{keyProbabilityTable.safe[index]}</td>
-          <td>{keyProbabilityTable.leaked[index]}</td>
-          <td>{keyProbabilityTable.lost[index]}</td>
-          <td>{keyProbabilityTable.stolen[index]}</td>
+          <td>{index + 1}</td>
+          <td>{toPercent(keyProbabilityTable.safe[index])}</td>
+          <td>{toPercent(keyProbabilityTable.leaked[index])}</td>
+          <td>{toPercent(keyProbabilityTable.lost[index])}</td>
+          <td>{toPercent(keyProbabilityTable.stolen[index])}</td>
         </tr>
       );
     }
@@ -152,7 +157,7 @@ function App() {
       }
     }
 
-    return parseFloat(walletSuccessProb.toFixed(8));
+    return toPercent(walletSuccessProb);
   }
 
   function displayWallet() {
@@ -163,14 +168,89 @@ function App() {
     for (let combination of wallet) {
       walletString += " ( ";
       for (let keyIndex of combination) {
-        walletString += keyIndex.toString() + " & ";
+        walletString += (keyIndex + 1).toString() + " and ";
       }
-      walletString = walletString.slice(0, -2);
+      walletString = walletString.slice(0, -4);
       walletString += " ) ";
-      walletString += " | ";
+      walletString += " or ";
     }
-    walletString = walletString.slice(0, -2);
+    walletString = walletString.slice(0, -3);
     return walletString;
+  }
+
+  function parseWalletFromString(walletStr) {
+    let walletTokens = walletStr.split(' ');
+    let lookForNumber = false;
+    let lookForAnd = false;
+    let lookForOr = false;
+    let lookForCombinationStart = true;
+    let lookForCombinationEnd = false;
+    let newWallet = [];
+    let combination = [];
+
+    if (walletStr.length == 0) {
+      setWallet([]);
+    }
+
+    for (let token of walletTokens) {
+      if (lookForCombinationStart) {
+        if (token != "(") {
+          return;
+        }
+        lookForNumber = true;
+        lookForCombinationStart = false;
+        continue;
+      }
+      if (lookForNumber) {
+        try {
+          let keyIndex = parseInt(token) - 1;
+          if (keyIndex >= keyNum) {
+            return;
+          }
+          combination.push(keyIndex);
+          lookForNumber = false;
+          lookForAnd = true;
+          lookForCombinationEnd = true;
+          continue;
+        } catch {
+          return;
+        }
+      }
+      if (lookForAnd || lookForCombinationEnd) {
+        if (token == 'and') {
+          lookForNumber = true;
+          lookForCombinationEnd = false;
+          lookForAnd = false;
+          continue;
+        }
+        else if (token == ')') {
+          reduceWallet(newWallet, combination);
+          combination = [];
+          lookForCombinationEnd = false;
+          lookForOr = true;
+          lookForAnd = false;
+          continue;
+        }
+        else {
+          return;
+        }
+      }
+      if (lookForOr) {
+        if (token == 'or') {
+          lookForCombinationStart = true;
+          lookForOr = false;
+        }
+        else {
+          return;
+        }
+      }
+    }
+
+    if (lookForOr) {
+      setWallet(newWallet);
+      setSelectedKeyForCombination(-1);
+      setCombinationToAdd([]);
+    }
   }
 
   function addToCombination(event) {
@@ -188,26 +268,30 @@ function App() {
     setSelectedKeyForCombination(-1);
   }
 
-  function addCombinationToWallet(event) {
-    if (combinationToAdd.length == 0) {
+  function reduceWallet(curWallet, combination) {
+    if (combination.length == 0) {
       return;
     }
     let combinationReduced = false;
-    for (let i = 0; i < wallet.length; i++) {
-      if (combinationToAdd.every(elem => wallet[i].includes(elem))) {
-        wallet[i] = combinationToAdd;
+    for (let i = 0; i < curWallet.length; i++) {
+      if (combination.every(elem => curWallet[i].includes(elem))) {
+        curWallet[i] = combination;
         combinationReduced = true;
         break;
       }
-      else if (wallet[i].every(elem => combinationToAdd.includes(elem))) {
+      else if (curWallet[i].every(elem => combination.includes(elem))) {
         combinationReduced = true;
         break;
       }
     }
 
     if (!combinationReduced) {
-      wallet.push(combinationToAdd);
+      curWallet.push(combination);
     }
+  }
+
+  function addCombinationToWallet(event) {
+    reduceWallet(wallet, combinationToAdd);
     setWallet(wallet);
     setSelectedKeyForCombination(-1);
     setCombinationToAdd([]);
@@ -216,13 +300,13 @@ function App() {
   function displayCombinationEditor() {
     let displayCurrentState = "";
     for (let keyIndex of combinationToAdd) {
-      displayCurrentState += keyIndex.toString() + " & ";
+      displayCurrentState += (keyIndex + 1).toString() + " and ";
     }
 
     let options = [(<option value={-1}>{" "}</option>)];
     for (let i = 0; i < keyNum; i++) {
       if (!combinationToAdd.includes(i)) {
-        options.push(<option value={i}>{i}</option>);
+        options.push(<option value={i}>{i + 1}</option>);
       }
     }
 
@@ -258,6 +342,9 @@ function App() {
       <button onClick={addCombinationToWallet}>Add combination to wallet</button><br />
       <button onClick={() => { setCombinationToAdd([]); setSelectedKeyForCombination(-1); }}>Clear combination</button>
       <h2>Wallet</h2>
+      <h3>(Optional) Enter Wallet as String</h3>
+      <input type="text" onChange={(event) => parseWalletFromString(event.target.value)} />
+
       <h3>{displayWallet()}</h3>
       <button onClick={() => { setWallet([]) }}>Clear Wallet</button>
       <h2>Wallet Success Probability</h2>
