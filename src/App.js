@@ -18,7 +18,7 @@ function App() {
   const [isEditingProbabilities, setIsEditingProbabilities] = useState(false);
 
   function renderTableHeader() {
-    let header = [" "].concat(Object.keys(keyProbabilityTable));
+    let header = [" ", " "].concat(Object.keys(keyProbabilityTable));
     return header.map((key, index) => {
       return <th key={index}>{key.toUpperCase()}</th>
     });
@@ -50,10 +50,47 @@ function App() {
     return parseFloat((probability * 100).toFixed(floatingPrecision)).toString() + ' %';
   }
 
+  function duplicateKey(index) {
+    keyProbabilityTable.safe.push(keyProbabilityTable.safe[index]);
+    keyProbabilityTable.leaked.push(keyProbabilityTable.leaked[index]);
+    keyProbabilityTable.lost.push(keyProbabilityTable.lost[index]);
+    keyProbabilityTable.stolen.push(keyProbabilityTable.stolen[index]);
+
+    setKeyProbabilityTable(keyProbabilityTable);
+    setKeyNum(keyNum+1);
+  }
+
+  function removeKey(index) {
+    if (keyNum == 1) {
+      return;
+    }
+    for (const keyState in keyProbabilityTable) {
+      if (Object.hasOwnProperty.call(keyProbabilityTable, keyState)) {
+        keyProbabilityTable[keyState] = keyProbabilityTable[keyState].slice(0, index).concat(keyProbabilityTable[keyState].slice(index + 1, keyNum));
+      }
+    }
+    setKeyProbabilityTable(keyProbabilityTable);
+    setKeyNum(keyNum - 1);
+    setWallet([]);
+    setSelectedKeyForCombination(-1);
+    setCombinationToAdd([]);
+  }
+
+  function addKey() {
+    keyProbabilityTable.safe.push(keyProbabilityTable.safe[keyNum - 1]);
+    keyProbabilityTable.leaked.push(keyProbabilityTable.leaked[keyNum - 1]);
+    keyProbabilityTable.lost.push(keyProbabilityTable.lost[keyNum - 1]);
+    keyProbabilityTable.stolen.push(keyProbabilityTable.stolen[keyNum - 1]);
+
+    setKeyProbabilityTable(keyProbabilityTable);
+    setKeyNum(keyNum+1);
+  }
+
   function renderKeyProbInputRow(index) {
     if (isEditingProbabilities) {
       return (
         <tr key={index}>
+          <td></td>
           <td>{index + 1}</td>
           <td><input type="number" defaultValue={keyProbabilityTable.safe[index] * 100} onChange={(event) => updateKeyProbabilities('safe', index, parseFloat(event.target.value))} /> %</td>
           <td><input type="number" defaultValue={keyProbabilityTable.leaked[index] * 100} onChange={(event) => updateKeyProbabilities('leaked', index, parseFloat(event.target.value))} /> %</td>
@@ -65,6 +102,7 @@ function App() {
     else {
       return (
         <tr key={index}>
+          <td><button onClick={() => duplicateKey(index)}>copy</button><button onClick={() => removeKey(index)}>-</button></td>
           <td>{index + 1}</td>
           <td>{toPercent(keyProbabilityTable.safe[index])}</td>
           <td>{toPercent(keyProbabilityTable.leaked[index])}</td>
@@ -176,6 +214,12 @@ function App() {
     }
     walletString = walletString.slice(0, -3);
     return walletString;
+  }
+
+  function findOptimalWallet() {
+    if (keyNum > 4) {
+      return;
+    }
   }
 
   function parseWalletFromString(walletStr) {
@@ -324,7 +368,7 @@ function App() {
     <div>
       <h1>Configure Keys</h1>
       <h2>How many keys?</h2>
-      <input type="number" defaultValue={1} onChange={(event) => updateKeyNum(parseInt(event.target.value))} />
+      <input type="number" defaultValue={keyNum} onChange={(event) => updateKeyNum(parseInt(event.target.value))} />
       <p>Keys: {keyNum}</p>
 
       <h2>Set Key Probabilities</h2>
@@ -335,6 +379,7 @@ function App() {
           {keyProbInputs}
         </tbody>
       </table>
+      <button onClick={addKey}>+</button>
 
       <h2>Set Wallet Configuration</h2>
       {displayCombinationEditor()}
