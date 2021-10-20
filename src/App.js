@@ -16,6 +16,10 @@ function App() {
   const [combinationToAdd, setCombinationToAdd] = useState([]);
   const [selectedKeyForCombination, setSelectedKeyForCombination] = useState(-1);
   const [isEditingProbabilities, setIsEditingProbabilities] = useState(false);
+  let curOptimalWallet = [];
+  let maxSuccessForWallet = 0;
+  const [optimalWallet, setOptimalWallet] = useState([]);
+  const [optimalWalletProb, setOptimalWalletProb] = useState(0);
 
   function renderTableHeader() {
     let header = [" ", " "].concat(Object.keys(keyProbabilityTable));
@@ -57,7 +61,7 @@ function App() {
     keyProbabilityTable.stolen.push(keyProbabilityTable.stolen[index]);
 
     setKeyProbabilityTable(keyProbabilityTable);
-    setKeyNum(keyNum+1);
+    setKeyNum(keyNum + 1);
   }
 
   function removeKey(index) {
@@ -83,7 +87,7 @@ function App() {
     keyProbabilityTable.stolen.push(keyProbabilityTable.stolen[keyNum - 1]);
 
     setKeyProbabilityTable(keyProbabilityTable);
-    setKeyNum(keyNum+1);
+    setKeyNum(keyNum + 1);
   }
 
   function renderKeyProbInputRow(index) {
@@ -139,8 +143,8 @@ function App() {
     setKeyNum(number);
   }
 
-  function ownerSuccessForScenarioAndWallet(scenario) {
-    for (let combination of wallet) {
+  function ownerSuccessForScenarioAndWallet(walletArr, scenario) {
+    for (let combination of walletArr) {
       let combinationPassed = true;
       for (let keyIndex of combination) {
         let keyState = keyStates[parseInt(scenario[keyIndex])];
@@ -157,8 +161,8 @@ function App() {
     return false;
   }
 
-  function adversaryFailureForScenarioAndWallet(scenario) {
-    for (let combination of wallet) {
+  function adversaryFailureForScenarioAndWallet(walletArr, scenario) {
+    for (let combination of walletArr) {
       let combinationPassed = true;
       for (let keyIndex of combination) {
         let keyState = keyStates[parseInt(scenario[keyIndex])];
@@ -183,27 +187,27 @@ function App() {
     return scenarioProb;
   }
 
-  function computeProbabilityForWallet() {
+  function computeProbabilityForWallet(walletArr) {
     let walletSuccessProb = 0;
 
     // Ahead lies some base 4 magic to enumerate all scenarios
     for (let i = 0; i < 4 ** keyNum; i++) {
       let scenario = i.toString(4);
       scenario = scenario.padStart(keyNum, '0');
-      if (ownerSuccessForScenarioAndWallet(scenario) && adversaryFailureForScenarioAndWallet(scenario)) {
+      if (ownerSuccessForScenarioAndWallet(walletArr, scenario) && adversaryFailureForScenarioAndWallet(walletArr, scenario)) {
         walletSuccessProb += scenarioProbability(scenario);
       }
     }
 
-    return toPercent(walletSuccessProb);
+    return walletSuccessProb;
   }
 
-  function displayWallet() {
+  function displayWallet(walletArr) {
     let walletString = "";
-    if (wallet.length == 0 || wallet[0].length == 0) {
+    if (walletArr.length == 0 || walletArr[0].length == 0) {
       return "( )";
     }
-    for (let combination of wallet) {
+    for (let combination of walletArr) {
       walletString += " ( ";
       for (let keyIndex of combination) {
         walletString += (keyIndex + 1).toString() + " and ";
@@ -216,10 +220,58 @@ function App() {
     return walletString;
   }
 
+  function combinationCoveredInWallet(wallet, newCombination) {
+    for (let combination of wallet) {
+      if (combination & newCombination == combination) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  function convertBinaryWalletToWallet(binWallet) {
+    let wallet = [];
+    for (let binComb of binWallet) {
+      let combination = [];
+      for (let i = 0; i < keyNum ; i++) {
+        if ((binComb & (1 << i)) > 0) {
+          combination.push(i);
+        }
+      }
+      if (combination.length > 0) {
+        wallet.push(combination);
+      }
+    }
+
+    return wallet;
+  }
+
+  function enumerateWalletProbabilities(baseWallet, prevCombination) {
+    for (let curCombination = prevCombination + 1; curCombination < 2 ** keyNum; curCombination++) {
+      if (!combinationCoveredInWallet(baseWallet, curCombination)) {
+        let curWallet = [curCombination].concat(baseWallet);
+        let convertedWallet = convertBinaryWalletToWallet(curWallet);
+        let walletProb = computeProbabilityForWallet(convertedWallet);
+        if (walletProb > maxSuccessForWallet) {
+          maxSuccessForWallet = walletProb;
+          curOptimalWallet = convertedWallet;
+        }
+
+        enumerateWalletProbabilities(curWallet, curCombination);
+      }
+    }
+  }
+
   function findOptimalWallet() {
     if (keyNum > 4) {
       return;
     }
+
+    // recursively enumerate all wallets 
+    enumerateWalletProbabilities([], 0);
+    setOptimalWallet(curOptimalWallet);
+    setOptimalWalletProb(maxSuccessForWallet);
   }
 
   function parseWalletFromString(walletStr) {
@@ -390,11 +442,15 @@ function App() {
       <h3>(Optional) Enter Wallet as String</h3>
       <input type="text" onChange={(event) => parseWalletFromString(event.target.value)} />
 
-      <h3>{displayWallet()}</h3>
+      <h3>{displayWallet(wallet)}</h3>
       <button onClick={() => { setWallet([]) }}>Clear Wallet</button>
       <h2>Wallet Success Probability</h2>
-      <h3>{computeProbabilityForWallet()}</h3>
+      <h3>{toPercent(computeProbabilityForWallet(wallet))}</h3>
 
+      <h2>Optimal Wallet</h2>
+      <button onClick={() => {setOptimalWallet([]);setOptimalWalletProb(0);findOptimalWallet();}}>Compute optimal wallet</button>
+      <h3>{displayWallet(optimalWallet)}</h3>
+      <h3>{toPercent(optimalWalletProb)}</h3>
     </div>
   );
 }
