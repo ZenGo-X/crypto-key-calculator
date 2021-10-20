@@ -1,4 +1,9 @@
 import React, { useState } from 'react';
+import Button from 'react-bootstrap/Button';
+import Table from 'react-bootstrap/Table';
+import Form from 'react-bootstrap/Form';
+import Card from 'react-bootstrap/Card';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
 function App() {
@@ -42,6 +47,8 @@ function App() {
         }
       }
       setKeyProbabilityTable(keyProbabilitiesUpdatedTable);
+      setOptimalWalletProb(0);
+      setOptimalWallet([]);
     }
     else {
       setKeyProbabilitiesUpdatedTable(keyProbabilityTable);
@@ -62,6 +69,8 @@ function App() {
 
     setKeyProbabilityTable(keyProbabilityTable);
     setKeyNum(keyNum + 1);
+    setOptimalWalletProb(0);
+    setOptimalWallet([]);
   }
 
   function removeKey(index) {
@@ -78,6 +87,8 @@ function App() {
     setWallet([]);
     setSelectedKeyForCombination(-1);
     setCombinationToAdd([]);
+    setOptimalWalletProb(0);
+    setOptimalWallet([]);
   }
 
   function addKey() {
@@ -88,12 +99,14 @@ function App() {
 
     setKeyProbabilityTable(keyProbabilityTable);
     setKeyNum(keyNum + 1);
+    setOptimalWalletProb(0);
+    setOptimalWallet([]);
   }
 
   function renderKeyProbInputRow(index) {
     if (isEditingProbabilities) {
       return (
-        <tr key={index}>
+        <tr key={index} style={{ textAlign: 'center' }}>
           <td></td>
           <td>{index + 1}</td>
           <td><input type="number" defaultValue={keyProbabilityTable.safe[index] * 100} onChange={(event) => updateKeyProbabilities('safe', index, parseFloat(event.target.value))} /> %</td>
@@ -105,8 +118,8 @@ function App() {
     }
     else {
       return (
-        <tr key={index}>
-          <td><button onClick={() => duplicateKey(index)}>copy</button><button onClick={() => removeKey(index)}>-</button></td>
+        <tr key={index} style={{ textAlign: 'center' }}>
+          <td style={{ alignItems: 'center' }}><Button size='sm' onClick={() => removeKey(index)}>-</Button><Button style={{ marginLeft: '10px' }} size='sm' onClick={() => duplicateKey(index)}>copy</Button></td>
           <td>{index + 1}</td>
           <td>{toPercent(keyProbabilityTable.safe[index])}</td>
           <td>{toPercent(keyProbabilityTable.leaked[index])}</td>
@@ -234,7 +247,7 @@ function App() {
     let wallet = [];
     for (let binComb of binWallet) {
       let combination = [];
-      for (let i = 0; i < keyNum ; i++) {
+      for (let i = 0; i < keyNum; i++) {
         if ((binComb & (1 << i)) > 0) {
           combination.push(i);
         }
@@ -406,9 +419,9 @@ function App() {
       }
     }
 
-    return (<div><h4>( {displayCurrentState}  <select value={selectedKeyForCombination} onChange={(event) => setSelectedKeyForCombination(event.target.value)}>
+    return (<div><div style={{ fontSize: '25px', fontWeight: 'bold', marginBottom: '5px', marginTop: '15px' }}>( {displayCurrentState}   )</div> <Form.Select size='sm' value={selectedKeyForCombination} onChange={(event) => setSelectedKeyForCombination(event.target.value)}>
       {options}
-    </select> )</h4> <button onClick={addToCombination}>Add to combination</button></div>)
+    </Form.Select> <Button style={{ marginTop: '20px', marginBottom: '5px' }} size='sm' onClick={addToCombination}>Add to combination</Button></div>)
   }
 
   let keyProbInputs = [];
@@ -418,39 +431,59 @@ function App() {
 
   return (
     <div>
-      <h1>Configure Keys</h1>
-      <h2>How many keys?</h2>
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
+        integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU"
+        crossorigin="anonymous"
+      />
+      <h1 style={{ marginLeft: '100px', marginRight: '100px', marginTop: '20px', textAlign: 'center' }}>Crypto Wallet Success Calculator</h1>
+      {/* <h2>How many keys?</h2>
       <input type="number" defaultValue={keyNum} onChange={(event) => updateKeyNum(parseInt(event.target.value))} />
-      <p>Keys: {keyNum}</p>
+      <p>Keys: {keyNum}</p> */}
 
-      <h2>Set Key Probabilities</h2>
-      <button onClick={toggleEditingMode}>{isEditingProbabilities ? "Submit changes" : "Edit key probabilities"}</button>
-      <table id='keyProbabilities'>
-        <tbody>
-          <tr>{renderTableHeader()}</tr>
-          {keyProbInputs}
-        </tbody>
-      </table>
-      <button onClick={addKey}>+</button>
+      <Card style={{ marginLeft: '100px', marginRight: '100px', marginTop: '20px' }}>
+        <Card.Body>
+          <Card.Title style={{ fontSize: '28px' }}>Set Key Probabilities</Card.Title>
+          <Button style={{ marginTop: '15px', marginBottom: '10px' }} size='sm' onClick={toggleEditingMode}>{isEditingProbabilities ? "Submit changes" : "Edit key probabilities"}</Button>
+          <Table striped bordered hover id='keyProbabilities'>
+            <tbody>
+              <tr>{renderTableHeader()}</tr>
+              {keyProbInputs}
+            </tbody>
+          </Table>
+          <Button size='sm' onClick={addKey}>+</Button>
+        </Card.Body>
+      </Card>
 
-      <h2>Set Wallet Configuration</h2>
-      {displayCombinationEditor()}
+      <Card style={{ marginLeft: '100px', marginRight: '100px', marginTop: '20px' }}>
+        <Card.Body>
+          <Card.Title style={{ fontSize: '28px' }}>Set Wallet Configuration</Card.Title>
+          {displayCombinationEditor()}
 
-      <button onClick={addCombinationToWallet}>Add combination to wallet</button><br />
-      <button onClick={() => { setCombinationToAdd([]); setSelectedKeyForCombination(-1); }}>Clear combination</button>
-      <h2>Wallet</h2>
-      <h3>(Optional) Enter Wallet as String</h3>
-      <input type="text" onChange={(event) => parseWalletFromString(event.target.value)} />
+          <Button style={{ marginBottom: '5px' }} size='sm' onClick={addCombinationToWallet}>Add combination to wallet</Button><br />
+          <Button style={{ marginBottom: '20px' }} size='sm' onClick={() => { setCombinationToAdd([]); setSelectedKeyForCombination(-1); }}>Clear combination</Button>
 
-      <h3>{displayWallet(wallet)}</h3>
-      <button onClick={() => { setWallet([]) }}>Clear Wallet</button>
-      <h2>Wallet Success Probability</h2>
-      <h3>{toPercent(computeProbabilityForWallet(wallet))}</h3>
+          <Card.Text style={{ fontSize: '25px' }}>(Optional) Enter Wallet as String</Card.Text>
+          <Form.Control type="text" size='sm' onChange={(event) => parseWalletFromString(event.target.value)} />
+        </Card.Body>
+      </Card>
 
-      <h2>Optimal Wallet</h2>
-      <button onClick={() => {setOptimalWallet([]);setOptimalWalletProb(0);findOptimalWallet();}}>Compute optimal wallet</button>
-      <h3>{displayWallet(optimalWallet)}</h3>
-      <h3>{toPercent(optimalWalletProb)}</h3>
+      <Card style={{ marginLeft: '100px', marginRight: '100px', marginTop: '20px', marginBottom: '20px' }}>
+        <Card.Body>
+          <Card.Title style={{ fontSize: '28px' }}>Wallet</Card.Title>
+          <div style={{ fontSize: '25px', fontWeight: 'bold', marginTop: '15px', marginBottom: '10px' }}>{displayWallet(wallet)}</div>
+          <Button style={{ marginBottom: '20px' }} size='sm' onClick={() => { setWallet([]) }}>Clear Wallet</Button>
+
+          <div style={{ fontSize: '25px' }}>Wallet Success Probability</div>
+          <div style={{ fontSize: '25px', marginBottom: '20px' }}>{toPercent(computeProbabilityForWallet(wallet))}</div>
+
+          <div style={{ fontSize: '25px', marginBottom: '10px' }}>Optimal Wallet</div>
+          <Button style={{ marginBottom: '10px' }} size='sm' onClick={() => { setOptimalWallet([]); setOptimalWalletProb(0); findOptimalWallet(); }}>Compute optimal wallet</Button>
+          <div style={{ fontSize: '25px', fontWeight: 'bold' }}>{displayWallet(optimalWallet)}</div>
+          <div style={{ fontSize: '25px' }}>{toPercent(optimalWalletProb)}</div>
+        </Card.Body>
+      </Card>
     </div>
   );
 }
