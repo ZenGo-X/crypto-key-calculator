@@ -413,7 +413,7 @@ function App() {
     let buttons = [];
     for (let i = 0; i < keyNum; i++) {
       if (!combinationToAdd.includes(i)) {
-        buttons.push(<Button style={{ marginRight: '5px' }} onClick={(event) => addToCombination(i)}>{i + 1}</Button>);
+        buttons.push(<Button variant="info" style={{ marginRight: '5px' }} onClick={(event) => addToCombination(i)}>{i + 1}</Button>);
       }
     }
 
@@ -463,7 +463,7 @@ function App() {
 
   let warningMobile = <div></div>;
   if (showWarningMobile) {
-    warningMobile = <Alert variant="warning" onClose={() => setShowWarningMobile(false)} dismissible>You are viewing this page on mobile! For a better experience view either on desktop or in landscape mode.</Alert>;
+    warningMobile = <Alert variant="warning" onClose={() => setShowWarningMobile(false)} dismissible><Alert.Title>You are viewing this page on mobile!</Alert.Title> <p>For a better experience view either on desktop or in landscape mode.</p></Alert>;
   }
 
   return (
@@ -475,9 +475,6 @@ function App() {
         crossOrigin="anonymous"
       />
       <h1 style={{ marginLeft: marginHorizontalPx, marginRight: marginHorizontalPx, marginTop: '20px', textAlign: 'center' }}>Crypto Wallet Key Analyzer</h1>
-      {/* <h2>How many keys?</h2>
-      <input type="number" defaultValue={keyNum} onChange={(event) => updateKeyNum(parseInt(event.target.value))} />
-      <p>Keys: {keyNum}</p> */}
 
       <Card style={{ marginLeft: marginHorizontalPx, marginRight: marginHorizontalPx, marginTop: '20px' }}>
         <Card.Body>
