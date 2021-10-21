@@ -4,6 +4,7 @@ import Table from 'react-bootstrap/Table';
 import Form from 'react-bootstrap/Form';
 import Card from 'react-bootstrap/Card';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { isMobile } from 'react-device-detect';
 import './App.css';
 
 function App() {
@@ -25,6 +26,8 @@ function App() {
   let maxSuccessForWallet = 0;
   const [optimalWallet, setOptimalWallet] = useState([]);
   const [optimalWalletProb, setOptimalWalletProb] = useState(0);
+  const marginHorizontalPx = isMobile ? '5px' : '100px';
+  const minusButtonBottomMarginPx = isMobile ? '2px' : '0px';
 
   function renderTableHeader() {
     let header = [" ", " "].concat(Object.keys(keyProbabilityTable));
@@ -41,7 +44,7 @@ function App() {
   function toggleEditingMode() {
     if (isEditingProbabilities) {
       for (let i = 0; i < keyNum; i++) {
-        if (parseFloat((keyProbabilitiesUpdatedTable.safe[i] + keyProbabilitiesUpdatedTable.leaked[i] + keyProbabilitiesUpdatedTable.lost[i] + keyProbabilitiesUpdatedTable.stolen[i]).toFixed(floatingPrecision)) != 1) {
+        if (parseFloat((keyProbabilitiesUpdatedTable.safe[i] + keyProbabilitiesUpdatedTable.leaked[i] + keyProbabilitiesUpdatedTable.lost[i] + keyProbabilitiesUpdatedTable.stolen[i]).toFixed(floatingPrecision)) !== 1) {
           console.log("ERROR not 1");
           return;
         }
@@ -74,7 +77,7 @@ function App() {
   }
 
   function removeKey(index) {
-    if (keyNum == 1) {
+    if (keyNum === 1) {
       return;
     }
     for (const keyState in keyProbabilityTable) {
@@ -119,7 +122,7 @@ function App() {
     else {
       return (
         <tr key={index} style={{ textAlign: 'center' }}>
-          <td style={{ alignItems: 'center' }}><Button size='sm' onClick={() => removeKey(index)}>-</Button><Button style={{ marginLeft: '10px' }} size='sm' onClick={() => duplicateKey(index)}>copy</Button></td>
+          <td style={{ alignItems: 'center' }}><Button size='sm' style={{ marginBottom: minusButtonBottomMarginPx }} onClick={() => removeKey(index)}>-</Button><Button style={{ marginLeft: '10px' }} size='sm' onClick={() => duplicateKey(index)}>copy</Button></td>
           <td>{index + 1}</td>
           <td>{toPercent(keyProbabilityTable.safe[index])}</td>
           <td>{toPercent(keyProbabilityTable.leaked[index])}</td>
@@ -130,38 +133,38 @@ function App() {
     }
   }
 
-  function updateKeyNum(number) {
-    if (number < 1) {
-      return;
-    }
-    if (number < keyProbabilityTable.safe.length) {
-      for (const keyState in keyProbabilityTable) {
-        if (Object.hasOwnProperty.call(keyProbabilityTable, keyState)) {
-          keyProbabilityTable[keyState] = keyProbabilityTable[keyState].slice(0, -1);
-        }
-      }
-      setWallet([]);
-      setSelectedKeyForCombination(-1);
-      setCombinationToAdd([]);
-    }
-    else {
-      for (let i = 0; i < (number - keyProbabilityTable.safe.length); i++) {
-        keyProbabilityTable.safe.push(0.7);
-        keyProbabilityTable.leaked.push(0.05);
-        keyProbabilityTable.lost.push(0.15);
-        keyProbabilityTable.stolen.push(0.1);
-      }
-    }
-    setKeyProbabilityTable(keyProbabilityTable);
-    setKeyNum(number);
-  }
+  // function updateKeyNum(number) {
+  //   if (number < 1) {
+  //     return;
+  //   }
+  //   if (number < keyProbabilityTable.safe.length) {
+  //     for (const keyState in keyProbabilityTable) {
+  //       if (Object.hasOwnProperty.call(keyProbabilityTable, keyState)) {
+  //         keyProbabilityTable[keyState] = keyProbabilityTable[keyState].slice(0, -1);
+  //       }
+  //     }
+  //     setWallet([]);
+  //     setSelectedKeyForCombination(-1);
+  //     setCombinationToAdd([]);
+  //   }
+  //   else {
+  //     for (let i = 0; i < (number - keyProbabilityTable.safe.length); i++) {
+  //       keyProbabilityTable.safe.push(0.7);
+  //       keyProbabilityTable.leaked.push(0.05);
+  //       keyProbabilityTable.lost.push(0.15);
+  //       keyProbabilityTable.stolen.push(0.1);
+  //     }
+  //   }
+  //   setKeyProbabilityTable(keyProbabilityTable);
+  //   setKeyNum(number);
+  // }
 
   function ownerSuccessForScenarioAndWallet(walletArr, scenario) {
     for (let combination of walletArr) {
       let combinationPassed = true;
       for (let keyIndex of combination) {
         let keyState = keyStates[parseInt(scenario[keyIndex])];
-        if (keyState == 'lost' || keyState == 'stolen') {
+        if (keyState === 'lost' || keyState === 'stolen') {
           combinationPassed = false;
           break;
         }
@@ -179,7 +182,7 @@ function App() {
       let combinationPassed = true;
       for (let keyIndex of combination) {
         let keyState = keyStates[parseInt(scenario[keyIndex])];
-        if (keyState == 'lost' || keyState == 'safe') {
+        if (keyState === 'lost' || keyState === 'safe') {
           combinationPassed = false;
           break;
         }
@@ -217,7 +220,7 @@ function App() {
 
   function displayWallet(walletArr) {
     let walletString = "";
-    if (walletArr.length == 0 || walletArr[0].length == 0) {
+    if (walletArr.length === 0 || walletArr[0].length === 0) {
       return "( )";
     }
     for (let combination of walletArr) {
@@ -235,7 +238,7 @@ function App() {
 
   function combinationCoveredInWallet(wallet, newCombination) {
     for (let combination of wallet) {
-      if (combination & newCombination == combination) {
+      if (combination & newCombination === combination) {
         return true;
       }
     }
@@ -288,7 +291,6 @@ function App() {
   }
 
   function parseWalletFromString(walletStr) {
-    let walletTokens = walletStr.split(' ');
     let lookForNumber = false;
     let lookForAnd = false;
     let lookForOr = false;
@@ -297,13 +299,24 @@ function App() {
     let newWallet = [];
     let combination = [];
 
-    if (walletStr.length == 0) {
+    if (walletStr.length === 0) {
       setWallet([]);
     }
 
+    // normalize entered string
+    walletStr = walletStr
+    .toLowerCase()
+    .replace(/\(/g, ' ( ')
+    .replace(/\)/g, ' ) ')
+    .replace(/and/g, ' and ')
+    .replace(/or/g, ' or ')
+    .replace(/[\s]+/g, ' ')
+    .trim();
+    let walletTokens = walletStr.split(' ');
+
     for (let token of walletTokens) {
       if (lookForCombinationStart) {
-        if (token != "(") {
+        if (token !== "(") {
           return;
         }
         lookForNumber = true;
@@ -326,13 +339,13 @@ function App() {
         }
       }
       if (lookForAnd || lookForCombinationEnd) {
-        if (token == 'and') {
+        if (token === 'and') {
           lookForNumber = true;
           lookForCombinationEnd = false;
           lookForAnd = false;
           continue;
         }
-        else if (token == ')') {
+        else if (token === ')') {
           reduceWallet(newWallet, combination);
           combination = [];
           lookForCombinationEnd = false;
@@ -345,7 +358,7 @@ function App() {
         }
       }
       if (lookForOr) {
-        if (token == 'or') {
+        if (token === 'or') {
           lookForCombinationStart = true;
           lookForOr = false;
         }
@@ -363,7 +376,7 @@ function App() {
   }
 
   function addToCombination(event) {
-    if (selectedKeyForCombination == -1) {
+    if (selectedKeyForCombination === -1) {
       return;
     }
     combinationToAdd.push(parseInt(selectedKeyForCombination));
@@ -378,7 +391,7 @@ function App() {
   }
 
   function reduceWallet(curWallet, combination) {
-    if (combination.length == 0) {
+    if (combination.length === 0) {
       return;
     }
     let combinationReduced = false;
@@ -437,12 +450,12 @@ function App() {
         integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU"
         crossorigin="anonymous"
       />
-      <h1 style={{ marginLeft: '100px', marginRight: '100px', marginTop: '20px', textAlign: 'center' }}>Crypto Wallet Success Calculator</h1>
+      <h1 style={{ marginLeft: marginHorizontalPx, marginRight: marginHorizontalPx, marginTop: '20px', textAlign: 'center' }}>Crypto Wallet Success Calculator</h1>
       {/* <h2>How many keys?</h2>
       <input type="number" defaultValue={keyNum} onChange={(event) => updateKeyNum(parseInt(event.target.value))} />
       <p>Keys: {keyNum}</p> */}
 
-      <Card style={{ marginLeft: '100px', marginRight: '100px', marginTop: '20px' }}>
+      <Card style={{ marginLeft: marginHorizontalPx, marginRight: marginHorizontalPx, marginTop: '20px' }}>
         <Card.Body>
           <Card.Title style={{ fontSize: '28px' }}>Set Key Probabilities</Card.Title>
           <Button style={{ marginTop: '15px', marginBottom: '10px' }} size='sm' onClick={toggleEditingMode}>{isEditingProbabilities ? "Submit changes" : "Edit key probabilities"}</Button>
@@ -456,7 +469,7 @@ function App() {
         </Card.Body>
       </Card>
 
-      <Card style={{ marginLeft: '100px', marginRight: '100px', marginTop: '20px' }}>
+      <Card style={{ marginLeft: marginHorizontalPx, marginRight: marginHorizontalPx, marginTop: '20px' }}>
         <Card.Body>
           <Card.Title style={{ fontSize: '28px' }}>Set Wallet Configuration</Card.Title>
           {displayCombinationEditor()}
@@ -469,7 +482,7 @@ function App() {
         </Card.Body>
       </Card>
 
-      <Card style={{ marginLeft: '100px', marginRight: '100px', marginTop: '20px', marginBottom: '20px' }}>
+      <Card style={{ marginLeft: marginHorizontalPx, marginRight: marginHorizontalPx, marginTop: '20px', marginBottom: '20px' }}>
         <Card.Body>
           <Card.Title style={{ fontSize: '28px' }}>Wallet</Card.Title>
           <div style={{ fontSize: '25px', fontWeight: 'bold', marginTop: '15px', marginBottom: '10px' }}>{displayWallet(wallet)}</div>
