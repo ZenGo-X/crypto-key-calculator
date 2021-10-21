@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
 import Form from 'react-bootstrap/Form';
@@ -375,19 +375,9 @@ function App() {
     }
   }
 
-  function addToCombination(event) {
-    if (selectedKeyForCombination === -1) {
-      return;
-    }
-    combinationToAdd.push(parseInt(selectedKeyForCombination));
-    setCombinationToAdd(combinationToAdd);
-    for (let i = 0; i < keyNum; i++) {
-      if (!combinationToAdd.includes(i)) {
-        setSelectedKeyForCombination(i);
-        return;
-      }
-    }
-    setSelectedKeyForCombination(-1);
+  function addToCombination(keyToAdd) {
+    const newCombinationToAdd = [ ...combinationToAdd, keyToAdd];
+    setCombinationToAdd(newCombinationToAdd);
   }
 
   function reduceWallet(curWallet, combination) {
@@ -425,16 +415,15 @@ function App() {
       displayCurrentState += (keyIndex + 1).toString() + " and ";
     }
 
-    let options = [(<option value={-1}>{" "}</option>)];
+    let buttons = [];
     for (let i = 0; i < keyNum; i++) {
       if (!combinationToAdd.includes(i)) {
-        options.push(<option value={i}>{i + 1}</option>);
+        buttons.push(<Button style={{marginRight: '5px'}} onClick={(event) => addToCombination(i)}>{i + 1}</Button>);
       }
     }
 
-    return (<div><div style={{ fontSize: '25px', fontWeight: 'bold', marginBottom: '5px', marginTop: '15px' }}>( {displayCurrentState}   )</div> <Form.Select size='sm' value={selectedKeyForCombination} onChange={(event) => setSelectedKeyForCombination(event.target.value)}>
-      {options}
-    </Form.Select> <Button style={{ marginTop: '20px', marginBottom: '5px' }} size='sm' onClick={addToCombination}>Add to combination</Button></div>)
+    return (<div><div style={{ fontSize: '25px', fontWeight: 'bold', marginBottom: '5px', marginTop: '15px' }}>( {displayCurrentState}   )</div>
+    <div style={{marginBottom: '15px'}}>{buttons}</div></div>)
   }
 
   let keyProbInputs = [];
@@ -448,7 +437,7 @@ function App() {
         rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
         integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU"
-        crossorigin="anonymous"
+        crossOrigin="anonymous"
       />
       <h1 style={{ marginLeft: marginHorizontalPx, marginRight: marginHorizontalPx, marginTop: '20px', textAlign: 'center' }}>Crypto Wallet Success Calculator</h1>
       {/* <h2>How many keys?</h2>
