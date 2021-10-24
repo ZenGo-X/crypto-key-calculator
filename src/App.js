@@ -464,15 +464,10 @@ function App() {
 
   let warningMobile = <div></div>;
   if (showWarningMobile) {
-    warningMobile = <Alert variant="warning" onClose={() => setShowWarningMobile(false)} dismissible><Alert.Title>You are viewing this page on mobile!</Alert.Title> <p>For a better experience view either on desktop or in landscape mode.</p></Alert>;
+    warningMobile = <Alert variant="warning" onClose={() => setShowWarningMobile(false)} dismissible><Alert.Heading>You are viewing this page on mobile!</Alert.Heading> <p>For a better experience view either on desktop or in landscape mode.</p></Alert>;
   }
 
   document.body.style.backgroundColor = '#DFF0EF';
-
-  let mintyButtonStyle = {
-    backgroundColor: 'purple',
-    color: 'white'
-  };
 
   return (
     <div style={{ backgroundColor: '#DFF0EF' }}>
