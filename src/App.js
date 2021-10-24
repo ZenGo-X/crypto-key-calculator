@@ -482,9 +482,11 @@ function App() {
       <Card style={{ marginLeft: marginHorizontalPx, marginRight: marginHorizontalPx, marginTop: '20px' }}>
         <Card.Body>
           <Card.Title style={{ fontSize: '28px' }}>Set Key Probabilities</Card.Title>
-          <Alert style={{ marginTop: '5px' }} variant="danger"> This app is provided warranty free such that no liability or responsibility is taken by any party for it or its uses. It was created for academic purposes only and should be treated as such.</Alert>
+          
           {warningMobile}
+          <Alert style={{ marginTop: '5px' }} variant="danger"> This app is provided warranty free such that no liability or responsibility is taken by any party for it or its uses. It was created for academic purposes only and should be treated as such.</Alert>
           {infoSetKeys}
+
           <style type="text/css">
             {`
             .btn-minty {
