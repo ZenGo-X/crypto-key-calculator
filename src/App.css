@@ -1,63 +1,19 @@
 .App {
   text-align: center;
+  background-color: #DFF0EF;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+#root {
+  background-color: '#DFF0EF';
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.btn-minty {
+  color: #fff;
+  background-color: #35C4BA;
+  border-color: #35C4BA;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+.btn-mint {
+  background-color: purple;
   color: white;
 }
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* #keyProbabilities {
-  text-align: center;
-  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-  border-collapse: collapse;
-  border: 3px solid #ddd;
-  width: 100%;
-}
-
-#keyProbabilities td, #keyProbabilities th {
-  border: 1px solid #ddd;
-  padding: 8px;
-}
-
-#keyProbabilities tr:nth-child(even){background-color: #f2f2f2;}
-
-#keyProbabilities tr:hover {background-color: #ddd;}
-
-#keyProbabilities th {
-  padding-top: 12px;
-  padding-bottom: 12px;
-  text-align: center;
-  background-color: #4CAF50;
-  color: white;
-} */

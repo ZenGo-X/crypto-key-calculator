@@ -4,6 +4,7 @@ import Table from 'react-bootstrap/Table';
 import Form from 'react-bootstrap/Form';
 import Card from 'react-bootstrap/Card';
 import Alert from 'react-bootstrap/Alert';
+import ZengoLogo from './assets/zengo_logo.svg';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { isMobile } from 'react-device-detect';
 import './App.css';
@@ -131,7 +132,7 @@ function App() {
     else {
       return (
         <tr key={index} style={{ textAlign: 'center' }}>
-          <td style={{ alignItems: 'center' }}><Button size='sm' style={{ marginBottom: minusButtonBottomMarginPx }} onClick={() => removeKey(index)}>-</Button><Button style={{ marginLeft: copyKeyMarginLeftPx }} size='sm' onClick={() => duplicateKey(index)}>copy</Button></td>
+          <td style={{ alignItems: 'center' }}><Button variant='minty' size='sm' style={{ marginBottom: minusButtonBottomMarginPx }} onClick={() => removeKey(index)}>-</Button><Button style={{ marginLeft: copyKeyMarginLeftPx }} size='sm' variant='minty' onClick={() => duplicateKey(index)}>copy</Button></td>
           <td>{index + 1}</td>
           <td>{toPercent(keyProbabilityTable.safe[index])}</td>
           <td>{toPercent(keyProbabilityTable.leaked[index])}</td>
@@ -413,7 +414,7 @@ function App() {
     let buttons = [];
     for (let i = 0; i < keyNum; i++) {
       if (!combinationToAdd.includes(i)) {
-        buttons.push(<Button variant="info" style={{ marginRight: '5px' }} onClick={(event) => addToCombination(i)}>{i + 1}</Button>);
+        buttons.push(<Button variant="light-lavender" style={{ marginRight: '5px' }} onClick={(event) => addToCombination(i)}>{i + 1}</Button>);
       }
     }
 
@@ -458,7 +459,7 @@ function App() {
 
   let infoWallet = <div></div>;
   if (showWalletInfo) {
-    infoWallet = <Alert style={{ marginTop: '5px' }} variant="info" onClose={() => setShowWalletInfo(false)} dismissible>Here the succee rate of your wallet is shown.<br />It is also possible to compute the optimal wallet configuration for your given keys (only up to 4 keys).</Alert>;
+    infoWallet = <Alert style={{ marginTop: '5px' }} variant="info" onClose={() => setShowWalletInfo(false)} dismissible>Here the success rate of your wallet is shown.<br />It is also possible to compute the optimal wallet configuration for your given keys (only up to 4 keys).</Alert>;
   }
 
   let warningMobile = <div></div>;
@@ -466,23 +467,45 @@ function App() {
     warningMobile = <Alert variant="warning" onClose={() => setShowWarningMobile(false)} dismissible><Alert.Title>You are viewing this page on mobile!</Alert.Title> <p>For a better experience view either on desktop or in landscape mode.</p></Alert>;
   }
 
+  document.body.style.backgroundColor = '#DFF0EF';
+
+  let mintyButtonStyle = {
+    backgroundColor: 'purple',
+    color: 'white'
+  };
+
   return (
-    <div>
+    <div style={{ backgroundColor: '#DFF0EF' }}>
       <link
         rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
         integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU"
         crossOrigin="anonymous"
       />
-      <h1 style={{ marginLeft: marginHorizontalPx, marginRight: marginHorizontalPx, marginTop: '20px', textAlign: 'center' }}>Crypto Wallet Key Analyzer</h1>
+      <h1 style={{ marginLeft: marginHorizontalPx, marginRight: marginHorizontalPx, marginTop: '20px', textAlign: 'center', color: '#2C2F33'}}>Crypto Wallet Key Analyzer</h1>
 
       <Card style={{ marginLeft: marginHorizontalPx, marginRight: marginHorizontalPx, marginTop: '20px' }}>
         <Card.Body>
           <Card.Title style={{ fontSize: '28px' }}>Set Key Probabilities</Card.Title>
+          <Alert style={{ marginTop: '5px' }} variant="danger"> This app is provided warranty free such that no liability or responsibility is taken by any party for it or its uses. It was created for academic purposes only and should be treated as such.</Alert>
           {warningMobile}
           {infoSetKeys}
+          <style type="text/css">
+            {`
+            .btn-minty {
+              color: #fff;
+              background-color: #23A79D;
+              border-color: #23A79D;
+            }
 
-          <Button style={{ marginTop: '15px', marginBottom: '10px' }} size='sm' onClick={toggleEditingMode}>{isEditingProbabilities ? "Submit changes" : "Edit key probabilities"}</Button>
+            .btn-light-lavender {
+              color: #fff;
+              background-color: #4C579B;
+              border-color: #4C579B;
+            }
+            `}
+          </style>
+          <Button style={{ marginTop: '15px', marginBottom: '10px' }} size='sm' variant='minty' onClick={toggleEditingMode}>{isEditingProbabilities ? "Submit changes" : "Edit key probabilities"}</Button>
           <Table striped bordered hover id='keyProbabilities'>
             <tbody>
               <tr>{renderTableHeader()}</tr>
@@ -490,7 +513,7 @@ function App() {
             </tbody>
           </Table>
           {alertProbabilitiesError}
-          <Button size='sm' onClick={addKey}>+</Button>
+          <Button size='sm' variant='minty' onClick={addKey}>+</Button>
         </Card.Body>
       </Card>
 
@@ -501,8 +524,8 @@ function App() {
 
           {displayCombinationEditor()}
 
-          <Button style={{ marginBottom: '5px' }} size='sm' onClick={addCombinationToWallet}>Add combination to wallet</Button><br />
-          <Button style={{ marginBottom: '20px' }} size='sm' onClick={() => { setCombinationToAdd([]) }}>Clear combination</Button>
+          <Button style={{ marginBottom: '5px' }} variant='minty' size='sm' onClick={addCombinationToWallet}>Add combination to wallet</Button><br />
+          <Button style={{ marginBottom: '20px' }} variant='minty' size='sm' onClick={() => { setCombinationToAdd([]) }}>Clear combination</Button>
 
           <Card.Text style={{ fontSize: '25px' }}>(Optional) Enter Wallet as String</Card.Text>
           <Form.Control type="text" size='sm' onChange={(event) => parseWalletFromString(event.target.value)} />
@@ -517,18 +540,19 @@ function App() {
 
           <div style={{ fontSize: '25px', fontWeight: 'bold', marginTop: '15px', marginBottom: '10px' }}>{displayWallet(wallet)}</div>
           {warnWalletReduced}
-          <Button style={{ marginBottom: '20px' }} size='sm' onClick={() => { setWallet([]) }}>Clear Wallet</Button>
+          <Button style={{ marginBottom: '20px' }} variant='minty' size='sm' onClick={() => { setWallet([]) }}>Clear Wallet</Button>
 
           <div style={{ fontSize: '25px' }}>Wallet Success Probability</div>
           <div style={{ fontSize: '25px', marginBottom: '20px' }}>{toPercent(computeProbabilityForWallet(wallet))}</div>
 
           <div style={{ fontSize: '25px', marginBottom: '10px' }}>Optimal Wallet</div>
-          <Button style={{ marginBottom: '10px' }} size='sm' onClick={() => { setOptimalWallet([]); setOptimalWalletProb(0); findOptimalWallet(); }}>Compute optimal wallet</Button>
+          <Button style={{ marginBottom: '10px' }} variant='minty' size='sm' onClick={() => { setOptimalWallet([]); setOptimalWalletProb(0); findOptimalWallet(); }}>Compute optimal wallet</Button>
           {alertCantComputeOptimalWallet}
           <div style={{ fontSize: '25px', fontWeight: 'bold' }}>{displayWallet(optimalWallet)}</div>
           <div style={{ fontSize: '25px' }}>{toPercent(optimalWalletProb)}</div>
         </Card.Body>
       </Card>
+      <p style={{ textAlign: 'right', marginRight: marginHorizontalPx }}>powered by <img src={ZengoLogo} style={{ height: '6vmin' }} alt="ZenGo" /></p>
     </div>
   );
 }

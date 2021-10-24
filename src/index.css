@@ -5,7 +5,13 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: '#f8f8f8';
+  background-color: '#DFF0EF';
+}
+
+.btn-minty {
+  color: #fff;
+  background-color: #23A79D;
+  border-color: #23A79D;
 }
 
 code {
