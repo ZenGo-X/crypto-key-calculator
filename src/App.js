@@ -134,7 +134,7 @@ function App() {
     else {
       return (
         <tr key={index} style={{ textAlign: 'center' }}>
-          <td style={{ alignItems: 'center' }}><Button variant='minty' size='sm' style={{ marginBottom: minusButtonBottomMarginPx }} onClick={() => removeKey(index)}>-</Button><Button style={{ marginLeft: copyKeyMarginLeftPx }} size='sm' variant='minty' onClick={() => duplicateKey(index)}>copy</Button></td>
+          <td style={{ alignItems: 'center' }}><Button variant='minty' size='sm' style={{ marginBottom: minusButtonBottomMarginPx }} onClick={() => removeKey(index)}>DEL</Button><Button style={{ marginLeft: copyKeyMarginLeftPx }} size='sm' variant='minty' onClick={() => duplicateKey(index)}>DUP</Button></td>
           <td>{index + 1}</td>
           <td>{toPercent(keyProbabilityTable.safe[index])}</td>
           <td>{toPercent(keyProbabilityTable.leaked[index])}</td>
@@ -451,18 +451,24 @@ function App() {
 
   let infoSetKeys = <div></div>;
   if (showSetKeysInfo) {
-    infoSetKeys = <Alert style={{ marginTop: '5px' }} variant="info" onClose={() => setShowSetKeysInfo(false)} dismissible>This calculator uses the key configuration of a crypto wallet and is able to compute the wallet's success rate. A wallet is considered successful when the user of the wallet is able to use it and an adversary can't.<br />A wallet is considered a set of different key combinations such that each combination can by itself use the wallet to sign a transaction.<br />Therefore, it is modeled here by an OR operation between different key combinations, such that all keys in a combination are ANDed together, meaning they must all be used together to use the wallet.<br /> <br />First, configure the probabilities of each key state in the below table for each of your keys:</Alert>;
+    infoSetKeys = <Alert style={{ marginTop: '5px' }} variant="info" onClose={() => setShowSetKeysInfo(false)} dismissible>
+      Compute the success rate of a crypto wallet based on the fault probabilities of its keys. <br /> 
+      A wallet is successful if the owner can use it but an adversary can't.<br />
+      More details <a href="blog post">here</a>. 
+      White paper <a href="tokenomics">here</a>. 
+      No warranty; <a href="LICENSE">BSD license</a>
+      </Alert>;
   }
 
   let infoWalletConfiguration = <div></div>;
-  if (showWalletConfigurationInfo) {
-    infoWalletConfiguration = <Alert style={{ marginTop: '5px' }} variant="info" onClose={() => setShowWalletConfigurationInfo(false)} dismissible>Now, set combinations of keys that can be used together in order to operate the wallet.<br />Do this by clicking on the keys that are part of the combination and then adding the combination to your wallet. <br /><br />(You may also enter a few combinations together directly as a string in the same syntax of the displayed wallet below)</Alert>;
-  }
+  // if (showWalletConfigurationInfo) {
+  //   infoWalletConfiguration = <Alert style={{ marginTop: '5px' }} variant="info" onClose={() => setShowWalletConfigurationInfo(false)} dismissible>Now, set combinations of keys that can be used together in order to operate the wallet.<br />Do this by clicking on the keys that are part of the combination and then adding the combination to your wallet. <br /><br />(You may also enter a few combinations together directly as a string in the same syntax of the displayed wallet below)</Alert>;
+  // }
 
   let infoWallet = <div></div>;
-  if (showWalletInfo) {
-    infoWallet = <Alert style={{ marginTop: '5px' }} variant="info" onClose={() => setShowWalletInfo(false)} dismissible>Here the success rate of your wallet is shown.<br />It is also possible to compute the optimal wallet configuration for your given keys (only up to 4 keys).</Alert>;
-  }
+  // if (showWalletInfo) {
+  //   infoWallet = <Alert style={{ marginTop: '5px' }} variant="info" onClose={() => setShowWalletInfo(false)} dismissible>Here the success rate of your wallet is shown.<br />It is also possible to compute the optimal wallet configuration for your given keys (only up to 4 keys).</Alert>;
+  // }
 
   let warningMobile = <div></div>;
   if (showWarningMobile) {
@@ -473,10 +479,13 @@ function App() {
 
   let keyConfCard = (<Card style={{ marginTop: '20px' }}>
     <Card.Body>
+    {/* <Alert style={{ marginTop: '5px' }} variant="danger">No warranty; <a href="LICENSE">BSD license</a>.</Alert> */}
+    {/* <Alert style={{ marginTop: '5px' }} variant="danger"> This app is provided warranty free such that no liability or responsibility is taken by any party for it or its uses. It was created for academic purposes only and should be treated as such.</Alert> */}
+
       <Card.Title style={{ fontSize: '28px' }}>Set Key Probabilities</Card.Title>
 
       {warningMobile}
-      <Alert style={{ marginTop: '5px' }} variant="danger"> This app is provided warranty free such that no liability or responsibility is taken by any party for it or its uses. It was created for academic purposes only and should be treated as such.</Alert>
+
       {infoSetKeys}
 
       <style type="text/css">
@@ -495,7 +504,7 @@ function App() {
 
       `}
       </style>
-      <Button style={{ marginTop: '15px', marginBottom: '10px' }} size='sm' variant='minty' onClick={toggleEditingMode}>{isEditingProbabilities ? "Submit changes" : "Edit key probabilities"}</Button>
+      <Button style={{ marginTop: '15px', marginBottom: '10px' }} size='sm' variant='minty' onClick={toggleEditingMode}>{isEditingProbabilities ? "Save changes" : "Edit key probabilities"}</Button>
       <Table striped bordered hover responsive id='keyProbabilities'>
         <tbody>
           <tr>{renderTableHeader()}</tr>
@@ -514,10 +523,11 @@ function App() {
 
       {displayCombinationEditor()}
 
-      <Button style={{ marginBottom: '5px' }} variant='minty' size='sm' onClick={addCombinationToWallet}>Add combination to wallet</Button><br />
+      <Button style={{ marginBottom: '5px' }} variant='minty' size='sm' onClick={addCombinationToWallet}>Add combination to wallet</Button>
+      <br />
       <Button style={{ marginBottom: '20px' }} variant='minty' size='sm' onClick={() => { setCombinationToAdd([]) }}>Clear combination</Button>
 
-      <Card.Text style={{ fontSize: '25px' }}>(Optional) Enter Wallet as String</Card.Text>
+      <Card.Text style={{ fontSize: '25px' }}>Or enter Wallet as String</Card.Text>
       <Form.Control type="text" size='sm' onChange={(event) => parseWalletFromString(event.target.value)} />
       {alertWalletStrWithErrors}
     </Card.Body>
@@ -532,8 +542,7 @@ function App() {
       {warnWalletReduced}
       <Button style={{ marginBottom: '20px' }} variant='minty' size='sm' onClick={() => { setWallet([]) }}>Clear Wallet</Button>
 
-      <div style={{ fontSize: '25px' }}>Wallet Success Probability</div>
-      <div style={{ fontSize: '25px', marginBottom: '20px' }}>{toPercent(computeProbabilityForWallet(wallet))}</div>
+      <div style={{ fontSize: '25px' }}>Wallet Success Probability: {toPercent(computeProbabilityForWallet(wallet))}</div>
 
       <div style={{ fontSize: '25px', marginBottom: '10px' }}>Optimal Wallet</div>
       <Button style={{ marginBottom: '10px' }} variant='minty' size='sm' onClick={() => { setOptimalWallet([]); setOptimalWalletProb(0); findOptimalWallet(); }}>Compute optimal wallet</Button>
