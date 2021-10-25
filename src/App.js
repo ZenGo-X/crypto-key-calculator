@@ -519,6 +519,7 @@ function App() {
   let walletConfCard = (<Card style={{ marginTop: '20px' }}>
     <Card.Body>
       <Card.Title style={{ fontSize: '28px' }}>Set Wallet Configuration</Card.Title>
+      <Card.Text style={{ fontSize: '15px', color: 'gray'  }}>E.g., (1 and 2) or (2 and 3)</Card.Text>
       {infoWalletConfiguration}
 
       {displayCombinationEditor()}
@@ -535,21 +536,34 @@ function App() {
 
   let walletCard = (<Card style={{ marginTop: '20px', marginBottom: '20px', minHeight: 'parent' }}>
     <Card.Body>
-      <Card.Title style={{ fontSize: '28px' }}>Wallet</Card.Title>
+      <Card.Title style={{ fontSize: '28px' }}>Wallet &nbsp;
+      <Button style={{ marginBottom: '20px' }} variant='minty' size='sm' onClick={() => { setWallet([]) }}>Clear</Button>
+      </Card.Title>
       {infoWallet}
 
       <div style={{ fontSize: '25px', fontWeight: 'bold', marginTop: '15px', marginBottom: '10px' }}>{displayWallet(wallet)}</div>
       {warnWalletReduced}
-      <Button style={{ marginBottom: '20px' }} variant='minty' size='sm' onClick={() => { setWallet([]) }}>Clear Wallet</Button>
 
-      <div style={{ fontSize: '25px' }}>Wallet Success Probability: {toPercent(computeProbabilityForWallet(wallet))}</div>
+      <div style={{ fontSize: '25px' }}>Success Probability: {toPercent(computeProbabilityForWallet(wallet))}</div>
 
-      <div style={{ fontSize: '25px', marginBottom: '10px' }}>Optimal Wallet</div>
+      {/* <div style={{ fontSize: '25px', marginBottom: '10px' }}>Optimal Wallet</div>
       <Button style={{ marginBottom: '10px' }} variant='minty' size='sm' onClick={() => { setOptimalWallet([]); setOptimalWalletProb(0); findOptimalWallet(); }}>Compute optimal wallet</Button>
       {alertCantComputeOptimalWallet}
       <div style={{ fontSize: '25px', fontWeight: 'bold' }}>{displayWallet(optimalWallet)}</div>
-      <div style={{ fontSize: '25px' }}>{toPercent(optimalWalletProb)}</div>
+      <div style={{ fontSize: '25px' }}>{toPercent(optimalWalletProb)}</div> */}
     </Card.Body>
+  </Card>);
+
+  let optimalWalletCard = (<Card style={{ marginTop: '20px', marginBottom: '20px', minHeight: 'parent' }}>
+  <Card.Body>
+    <Card.Title style={{ fontSize: '28px' }}>Optimal Wallet &nbsp;
+    {/* <div style={{ fontSize: '25px', marginBottom: '10px' }}>Optimal Wallet</div> */}
+    <Button style={{ marginBottom: '10px' }} variant='minty' size='sm' onClick={() => { setOptimalWallet([]); setOptimalWalletProb(0); findOptimalWallet(); }}>Compute</Button>
+    {alertCantComputeOptimalWallet}
+    </Card.Title>
+    <div style={{ fontSize: '25px', fontWeight: 'bold' }}>{displayWallet(optimalWallet)}</div>
+    <div style={{ fontSize: '25px' }}>{toPercent(optimalWalletProb)}</div>
+  </Card.Body>
   </Card>);
 
   let cardsContainer = <div></div>;
@@ -560,7 +574,14 @@ function App() {
       </Row>
       <Row style={{ marginLeft: marginHorizontalPx, marginRight: marginHorizontalPx }}>
         <Col>{walletConfCard}</Col>
-        <Col>{walletCard}</Col>
+        <Col>
+            <Row style={{ marginLeft: '0px', marginRight: '0px' }}>
+              <Col>{walletCard}</Col>
+            </Row>
+            <Row style={{ marginLeft: '0px', marginRight: '0px' }}>
+              <Col>{optimalWalletCard}</Col>
+            </Row>
+        </Col>
       </Row>
     </Container>;
   }
