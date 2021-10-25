@@ -9,6 +9,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { isMobile } from 'react-device-detect';
 import './App.css';
 import { Col, Container, Row } from 'react-bootstrap';
+import MetaTags from 'react-meta-tags';
 
 function App() {
   const [keyNum, setKeyNum] = useState(1);
@@ -491,10 +492,11 @@ function App() {
         background-color: #4C579B;
         border-color: #4C579B;
       }
+
       `}
       </style>
       <Button style={{ marginTop: '15px', marginBottom: '10px' }} size='sm' variant='minty' onClick={toggleEditingMode}>{isEditingProbabilities ? "Submit changes" : "Edit key probabilities"}</Button>
-      <Table striped bordered hover id='keyProbabilities'>
+      <Table striped bordered hover responsive id='keyProbabilities'>
         <tbody>
           <tr>{renderTableHeader()}</tr>
           {keyProbInputs}
@@ -567,19 +569,36 @@ function App() {
     </Container>;
   }
 
+  const meta = {
+    title: 'Crypto Wallet Key Analyzer',
+    description: 'Analyze given a certain crypto wallet key distribution setting, the probability of its failure',
+    meta: {
+      charset: 'utf-8',
+      name: {
+        keywords: 'crypto,wallet,keys',
+      }
+    }
+  };
+
   return (
-    <div style={{ backgroundColor: '#DFF0EF' }}>
+    <div style={{ backgroundColor: '#DFF0EF', fontFamily: 'AvenirNext-Medium' }}>
       <link
         rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
         integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU"
         crossOrigin="anonymous"
       />
+
+      <MetaTags>
+        <title>Crypto Wallet Key Analyzer</title>
+        <meta name="description" content="Analyze given a certain crypto wallet key distribution setting, the probability of its failure" />
+      </MetaTags>
+
       <h1 style={{ marginLeft: marginHorizontalPx, marginRight: marginHorizontalPx, marginTop: '20px', textAlign: 'center', color: '#2C2F33' }}>Crypto Wallet Key Analyzer</h1>
 
       {cardsContainer}
 
-      <p style={{ textAlign: 'right', marginRight: marginHorizontalPx }}>powered by <img src={ZengoLogo} style={{ height: '6vmin' }} alt="ZenGo" /></p>
+      <p style={{ textAlign: 'right', marginRight: marginHorizontalPx }}>powered by <a href="https://zengo.com/"><img src={ZengoLogo} style={{ height: '6vmin' }} alt="ZenGo" /></a></p>
     </div>
   );
 }
