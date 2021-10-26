@@ -524,8 +524,6 @@ function App() {
     <Card.Body>
       <Card.Title style={{ fontSize: '28px' }}>Set Wallet Configuration</Card.Title>
       <Card.Text style={{ fontSize: '15px', color: 'gray' }}>E.g. &nbsp; (1 and 2) or (2 and 3)</Card.Text>
-      {infoWalletConfiguration}
-
       {displayCombinationEditor()}
 
       <Button style={{ marginBottom: '5px' }} variant='minty' size='sm' onClick={addCombinationToWallet}>Add combination to wallet</Button>
@@ -543,8 +541,6 @@ function App() {
       <Card.Title style={{ fontSize: '28px' }}>Wallet &nbsp;
         <Button style={{ marginBottom: '5px' }} variant='minty' size='sm' onClick={() => { setWallet([]) }}>Clear</Button>
       </Card.Title>
-      {infoWallet}
-
       <div style={{ fontSize: '25px', fontWeight: 'bold', marginTop: '15px', marginBottom: '10px' }}>{displayWallet(wallet)}</div>
       {warnWalletReduced}
 
