@@ -469,7 +469,7 @@ function App() {
       A wallet is successful if the owner can use it but an adversary can't.<br />
       More details <a href="blog post" style={{ color: '#E6E9FB' }}>here</a>.
       White paper <a href="tokenomics" style={{ color: '#E6E9FB' }}>here</a>.
-      No warranty; <a href="LICENSE" style={{ color: '#E6E9FB' }}>BSD license</a>
+      No warranty; <a href="LICENSE" style={{ color: '#E6E9FB' }}>BSD license</a>. 
     </Alert>;
   }
 
@@ -482,7 +482,7 @@ function App() {
 
   let keyConfCard = (<Card style={{ marginTop: '20px' }}>
     <Card.Body>
-      <Card.Title style={{ fontSize: '28px' }}>Set Key Probabilities</Card.Title>
+      <Card.Title style={{ fontSize: '28px' }}>1. Set Key Probabilities</Card.Title>
 
       {warningMobile}
 
@@ -522,8 +522,8 @@ function App() {
 
   let walletConfCard = (<Card style={{ marginTop: '20px' }}>
     <Card.Body>
-      <Card.Title style={{ fontSize: '28px' }}>Set Wallet Configuration</Card.Title>
-      <Card.Text style={{ fontSize: '15px', color: 'gray' }}>E.g. &nbsp; (1 and 2) or (2 and 3)</Card.Text>
+      <Card.Title style={{ fontSize: '28px' }}>2. Set Wallet Configuration</Card.Title>
+      <Card.Text style={{ fontSize: '15px', color: 'gray' }}>Choose keys then click "Add combination to wallet".</Card.Text>
       {displayCombinationEditor()}
 
       <Button style={{ marginBottom: '5px' }} variant='minty' size='sm' onClick={addCombinationToWallet}>Add combination to wallet</Button>
@@ -531,14 +531,14 @@ function App() {
       <Button style={{ marginBottom: '20px' }} variant='minty' size='sm' onClick={() => { setCombinationToAdd([]) }}>Clear combination</Button>
 
       <Card.Text style={{ fontSize: '25px' }}>Or enter Wallet as String</Card.Text>
-      <Form.Control type="text" size='sm' onChange={(event) => parseWalletFromString(event.target.value)} />
+      <Form.Control type="text" size='sm' placeholder='(1 and 2) or (2 and 3)' onChange={(event) => parseWalletFromString(event.target.value)} />
       {alertWalletStrWithErrors}
     </Card.Body>
   </Card>);
 
   let walletCard = (<Card style={{ marginTop: '20px', marginBottom: '20px', minHeight: 'parent' }}>
     <Card.Body>
-      <Card.Title style={{ fontSize: '28px' }}>Wallet &nbsp;
+      <Card.Title style={{ fontSize: '28px' }}>3. Wallet &nbsp;
         <Button style={{ marginBottom: '5px' }} variant='minty' size='sm' onClick={() => { setWallet([]) }}>Clear</Button>
       </Card.Title>
       <div style={{ fontSize: '25px', fontWeight: 'bold', marginTop: '15px', marginBottom: '10px' }}>{displayWallet(wallet)}</div>
