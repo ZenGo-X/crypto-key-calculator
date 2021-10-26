@@ -34,8 +34,6 @@ function App() {
   const [showCantComputeOptimalWallet, setShowCantComputeOptimalWallet] = useState(false);
   const [showWalletReduced, setShowWalletReduced] = useState(false);
   const [showSetKeysInfo, setShowSetKeysInfo] = useState(true);
-  const [showWalletConfigurationInfo, setShowWalletConfigurationInfo] = useState(true);
-  const [showWalletInfo, setShowWalletInfo] = useState(true);
   const [showWarningMobile, setShowWarningMobile] = useState(isMobile);
   const marginHorizontalPx = isMobile ? '5px' : '100px';
   const minusButtonBottomMarginPx = isMobile ? '2px' : '0px';
@@ -467,23 +465,13 @@ function App() {
   let infoSetKeys = <div></div>;
   if (showSetKeysInfo) {
     infoSetKeys = <Alert style={{ marginTop: '5px' }} variant="lavender" onClose={() => setShowSetKeysInfo(false)} dismissible>
-      Compute the success rate of a crypto wallet based on the fault probabilities of its keys. <br /> 
+      Compute the success rate of a crypto wallet based on the fault probabilities of its keys. <br />
       A wallet is successful if the owner can use it but an adversary can't.<br />
-      More details <a href="blog post" style={{color: '#E6E9FB'}}>here</a>. 
-      White paper <a href="tokenomics" style={{color: '#E6E9FB'}}>here</a>. 
-      No warranty; <a href="LICENSE" style={{color: '#E6E9FB'}}>BSD license</a>
-      </Alert>;
+      More details <a href="blog post" style={{ color: '#E6E9FB' }}>here</a>.
+      White paper <a href="tokenomics" style={{ color: '#E6E9FB' }}>here</a>.
+      No warranty; <a href="LICENSE" style={{ color: '#E6E9FB' }}>BSD license</a>
+    </Alert>;
   }
-
-  let infoWalletConfiguration = <div></div>;
-  // if (showWalletConfigurationInfo) {
-  //   infoWalletConfiguration = <Alert style={{ marginTop: '5px' }} variant="info" onClose={() => setShowWalletConfigurationInfo(false)} dismissible>Now, set combinations of keys that can be used together in order to operate the wallet.<br />Do this by clicking on the keys that are part of the combination and then adding the combination to your wallet. <br /><br />(You may also enter a few combinations together directly as a string in the same syntax of the displayed wallet below)</Alert>;
-  // }
-
-  let infoWallet = <div></div>;
-  // if (showWalletInfo) {
-  //   infoWallet = <Alert style={{ marginTop: '5px' }} variant="info" onClose={() => setShowWalletInfo(false)} dismissible>Here the success rate of your wallet is shown.<br />It is also possible to compute the optimal wallet configuration for your given keys (only up to 4 keys).</Alert>;
-  // }
 
   let warningMobile = <div></div>;
   if (showWarningMobile) {
@@ -494,9 +482,6 @@ function App() {
 
   let keyConfCard = (<Card style={{ marginTop: '20px' }}>
     <Card.Body>
-    {/* <Alert style={{ marginTop: '5px' }} variant="danger">No warranty; <a href="LICENSE">BSD license</a>.</Alert> */}
-    {/* <Alert style={{ marginTop: '5px' }} variant="danger"> This app is provided warranty free such that no liability or responsibility is taken by any party for it or its uses. It was created for academic purposes only and should be treated as such.</Alert> */}
-
       <Card.Title style={{ fontSize: '28px' }}>Set Key Probabilities</Card.Title>
 
       {warningMobile}
@@ -538,7 +523,7 @@ function App() {
   let walletConfCard = (<Card style={{ marginTop: '20px' }}>
     <Card.Body>
       <Card.Title style={{ fontSize: '28px' }}>Set Wallet Configuration</Card.Title>
-      <Card.Text style={{ fontSize: '15px', color: 'gray'  }}>E.g. &nbsp; (1 and 2) or (2 and 3)</Card.Text>
+      <Card.Text style={{ fontSize: '15px', color: 'gray' }}>E.g. &nbsp; (1 and 2) or (2 and 3)</Card.Text>
       {infoWalletConfiguration}
 
       {displayCombinationEditor()}
@@ -556,7 +541,7 @@ function App() {
   let walletCard = (<Card style={{ marginTop: '20px', marginBottom: '20px', minHeight: 'parent' }}>
     <Card.Body>
       <Card.Title style={{ fontSize: '28px' }}>Wallet &nbsp;
-      <Button style={{ marginBottom: '5px' }} variant='minty' size='sm' onClick={() => { setWallet([]) }}>Clear</Button>
+        <Button style={{ marginBottom: '5px' }} variant='minty' size='sm' onClick={() => { setWallet([]) }}>Clear</Button>
       </Card.Title>
       {infoWallet}
 
@@ -565,23 +550,18 @@ function App() {
 
       <div style={{ fontSize: '25px' }}>Success Probability: {toPercent(computeProbabilityForWallet(wallet))}</div>
 
-      {/* <div style={{ fontSize: '25px', marginBottom: '10px' }}>Optimal Wallet</div>
-      <Button style={{ marginBottom: '10px' }} variant='minty' size='sm' onClick={() => { setOptimalWallet([]); setOptimalWalletProb(0); findOptimalWallet(); }}>Compute optimal wallet</Button>
-      {alertCantComputeOptimalWallet}
-      <div style={{ fontSize: '25px', fontWeight: 'bold' }}>{displayWallet(optimalWallet)}</div>
-      <div style={{ fontSize: '25px' }}>{toPercent(optimalWalletProb)}</div> */}
     </Card.Body>
   </Card>);
 
-  let optimalWalletCard = (<Card style={{ marginBottom: '20px'}}>
-  <Card.Body>
-    <Card.Title style={{ fontSize: '28px' }}>Optimal Wallet &nbsp;
-    <Button style={{ marginBottom: '5px' }} variant='minty' size='sm' onClick={() => { setOptimalWallet([]); setOptimalWalletProb(0); findOptimalWallet(); }}>Compute</Button>
-    {alertCantComputeOptimalWallet}
-    </Card.Title>
-    <div style={{ fontSize: '25px', fontWeight: 'bold' }}>{displayWallet(optimalWallet)}</div>
-    <div style={{ fontSize: '25px' }}>{toPercent(optimalWalletProb)}</div>
-  </Card.Body>
+  let optimalWalletCard = (<Card style={{ marginBottom: '20px' }}>
+    <Card.Body>
+      <Card.Title style={{ fontSize: '28px' }}>Optimal Wallet &nbsp;
+        <Button style={{ marginBottom: '5px' }} variant='minty' size='sm' onClick={() => { setOptimalWallet([]); setOptimalWalletProb(0); findOptimalWallet(); }}>Compute</Button>
+        {alertCantComputeOptimalWallet}
+      </Card.Title>
+      <div style={{ fontSize: '25px', fontWeight: 'bold' }}>{displayWallet(optimalWallet)}</div>
+      <div style={{ fontSize: '25px' }}>{toPercent(optimalWalletProb)}</div>
+    </Card.Body>
   </Card>);
 
   let cardsContainer = <div></div>;
@@ -593,12 +573,12 @@ function App() {
       <Row style={{ marginLeft: marginHorizontalPx, marginRight: marginHorizontalPx }}>
         <Col>{walletConfCard}</Col>
         <Col>
-            <Row >
-              <Col>{walletCard}</Col>
-            </Row>
-            <Row >
-              <Col>{optimalWalletCard}</Col>
-            </Row>
+          <Row >
+            <Col>{walletCard}</Col>
+          </Row>
+          <Row >
+            <Col>{optimalWalletCard}</Col>
+          </Row>
         </Col>
       </Row>
     </Container>;
@@ -613,6 +593,9 @@ function App() {
       </Row>
       <Row style={{ marginLeft: marginHorizontalPx, marginRight: marginHorizontalPx }}>
         <Col>{walletCard}</Col>
+      </Row>
+      <Row >
+        <Col>{optimalWalletCard}</Col>
       </Row>
     </Container>;
   }
