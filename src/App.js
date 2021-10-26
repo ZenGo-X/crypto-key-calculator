@@ -49,8 +49,23 @@ function App() {
   }
 
   function updateKeyProbabilities(state, index, percent) {
+    let probabilitiesSum = 0;
+    for (let stateIter of keyStates) {
+      if (stateIter !== 'safe' && stateIter !== state) {
+        probabilitiesSum += keyProbabilitiesUpdatedTable[stateIter][index];
+      }
+    }
+    probabilitiesSum += percent / 100;
+    probabilitiesSum = parseFloat(probabilitiesSum.toFixed(floatingPrecision));
+    if (probabilitiesSum >= 1) {
+      setShowProbabilitiesError(true);
+      return;
+    }
     keyProbabilitiesUpdatedTable[state][index] = percent / 100;
-    setKeyProbabilitiesUpdatedTable(keyProbabilitiesUpdatedTable);
+    keyProbabilitiesUpdatedTable['safe'][index] = 1 - probabilitiesSum;
+    let tableClone = Object.assign({}, keyProbabilitiesUpdatedTable);
+    setKeyProbabilitiesUpdatedTable(tableClone);
+    setShowProbabilitiesError(false);
   }
 
   function toggleEditingMode() {
@@ -124,7 +139,7 @@ function App() {
         <tr key={index} style={{ textAlign: 'center' }}>
           <td></td>
           <td>{index + 1}</td>
-          <td><input type="number" defaultValue={keyProbabilityTable.safe[index] * 100} onChange={(event) => updateKeyProbabilities('safe', index, parseFloat(event.target.value))} /> %</td>
+          <td><input type="number" disabled value={parseFloat((keyProbabilityTable.safe[index] * 100).toFixed(floatingPrecision))} /> %</td>
           <td><input type="number" defaultValue={keyProbabilityTable.leaked[index] * 100} onChange={(event) => updateKeyProbabilities('leaked', index, parseFloat(event.target.value))} /> %</td>
           <td><input type="number" defaultValue={keyProbabilityTable.lost[index] * 100} onChange={(event) => updateKeyProbabilities('lost', index, parseFloat(event.target.value))} /> %</td>
           <td><input type="number" defaultValue={keyProbabilityTable.stolen[index] * 100} onChange={(event) => updateKeyProbabilities('stolen', index, parseFloat(event.target.value))} /> %</td>
@@ -416,7 +431,7 @@ function App() {
     let buttons = [];
     for (let i = 0; i < keyNum; i++) {
       if (!combinationToAdd.includes(i)) {
-        buttons.push(<Button variant="light-lavender" style={{ marginRight: '5px' }} onClick={(event) => addToCombination(i)}>{i + 1}</Button>);
+        buttons.push(<Button variant="dark-lavender" style={{ marginRight: '5px' }} onClick={(event) => addToCombination(i)}>{i + 1}</Button>);
       }
     }
 
@@ -451,12 +466,12 @@ function App() {
 
   let infoSetKeys = <div></div>;
   if (showSetKeysInfo) {
-    infoSetKeys = <Alert style={{ marginTop: '5px' }} variant="info" onClose={() => setShowSetKeysInfo(false)} dismissible>
+    infoSetKeys = <Alert style={{ marginTop: '5px' }} variant="lavender" onClose={() => setShowSetKeysInfo(false)} dismissible>
       Compute the success rate of a crypto wallet based on the fault probabilities of its keys. <br /> 
       A wallet is successful if the owner can use it but an adversary can't.<br />
-      More details <a href="blog post">here</a>. 
-      White paper <a href="tokenomics">here</a>. 
-      No warranty; <a href="LICENSE">BSD license</a>
+      More details <a href="blog post" style={{color: '#E6E9FB'}}>here</a>. 
+      White paper <a href="tokenomics" style={{color: '#E6E9FB'}}>here</a>. 
+      No warranty; <a href="LICENSE" style={{color: '#E6E9FB'}}>BSD license</a>
       </Alert>;
   }
 
@@ -496,12 +511,16 @@ function App() {
         border-color: #23A79D;
       }
 
-      .btn-light-lavender {
+      .btn-dark-lavender {
         color: #fff;
         background-color: #4C579B;
         border-color: #4C579B;
       }
 
+      .alert-lavender {
+        color: #fff;
+        background-color: #7E88C7;
+      }
       `}
       </style>
       <Button style={{ marginTop: '15px', marginBottom: '10px' }} size='sm' variant='minty' onClick={toggleEditingMode}>{isEditingProbabilities ? "Save changes" : "Edit key probabilities"}</Button>
@@ -519,7 +538,7 @@ function App() {
   let walletConfCard = (<Card style={{ marginTop: '20px' }}>
     <Card.Body>
       <Card.Title style={{ fontSize: '28px' }}>Set Wallet Configuration</Card.Title>
-      <Card.Text style={{ fontSize: '15px', color: 'gray'  }}>E.g., (1 and 2) or (2 and 3)</Card.Text>
+      <Card.Text style={{ fontSize: '15px', color: 'gray'  }}>E.g. &nbsp; (1 and 2) or (2 and 3)</Card.Text>
       {infoWalletConfiguration}
 
       {displayCombinationEditor()}
@@ -537,7 +556,7 @@ function App() {
   let walletCard = (<Card style={{ marginTop: '20px', marginBottom: '20px', minHeight: 'parent' }}>
     <Card.Body>
       <Card.Title style={{ fontSize: '28px' }}>Wallet &nbsp;
-      <Button style={{ marginBottom: '20px' }} variant='minty' size='sm' onClick={() => { setWallet([]) }}>Clear</Button>
+      <Button style={{ marginBottom: '5px' }} variant='minty' size='sm' onClick={() => { setWallet([]) }}>Clear</Button>
       </Card.Title>
       {infoWallet}
 
@@ -554,11 +573,10 @@ function App() {
     </Card.Body>
   </Card>);
 
-  let optimalWalletCard = (<Card style={{ marginTop: '20px', marginBottom: '20px', minHeight: 'parent' }}>
+  let optimalWalletCard = (<Card style={{ marginBottom: '20px'}}>
   <Card.Body>
     <Card.Title style={{ fontSize: '28px' }}>Optimal Wallet &nbsp;
-    {/* <div style={{ fontSize: '25px', marginBottom: '10px' }}>Optimal Wallet</div> */}
-    <Button style={{ marginBottom: '10px' }} variant='minty' size='sm' onClick={() => { setOptimalWallet([]); setOptimalWalletProb(0); findOptimalWallet(); }}>Compute</Button>
+    <Button style={{ marginBottom: '5px' }} variant='minty' size='sm' onClick={() => { setOptimalWallet([]); setOptimalWalletProb(0); findOptimalWallet(); }}>Compute</Button>
     {alertCantComputeOptimalWallet}
     </Card.Title>
     <div style={{ fontSize: '25px', fontWeight: 'bold' }}>{displayWallet(optimalWallet)}</div>
@@ -575,10 +593,10 @@ function App() {
       <Row style={{ marginLeft: marginHorizontalPx, marginRight: marginHorizontalPx }}>
         <Col>{walletConfCard}</Col>
         <Col>
-            <Row style={{ marginLeft: '0px', marginRight: '0px' }}>
+            <Row >
               <Col>{walletCard}</Col>
             </Row>
-            <Row style={{ marginLeft: '0px', marginRight: '0px' }}>
+            <Row >
               <Col>{optimalWalletCard}</Col>
             </Row>
         </Col>

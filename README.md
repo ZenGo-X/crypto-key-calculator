@@ -11,6 +11,6 @@ And a local instance will be hosted on your machine.
 
 In order to build for production run:
 ```
-npm run buid
+npm run build
 ```
 Then, in the `build` directory will be all the files needed to host the application.
