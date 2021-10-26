@@ -590,7 +590,7 @@ function App() {
       <Row style={{ marginLeft: marginHorizontalPx, marginRight: marginHorizontalPx }}>
         <Col>{walletCard}</Col>
       </Row>
-      <Row >
+      <Row style={{ marginLeft: marginHorizontalPx, marginRight: marginHorizontalPx }}>
         <Col>{optimalWalletCard}</Col>
       </Row>
     </Container>;
