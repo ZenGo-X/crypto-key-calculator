@@ -6,3 +6,7 @@
 #root {
   background-color: '#DFF0EF';
 }
+
+input[type='number']{
+  width: 50px;
+} 
