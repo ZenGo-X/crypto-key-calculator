@@ -40,7 +40,7 @@ function App() {
   const copyKeyMarginLeftPx = isMobile ? '0px' : '10px';
 
   function renderTableHeader() {
-    let header = [" ", " "].concat(Object.keys(keyProbabilityTable));
+    let header = ["Key ID"].concat(Object.keys(keyProbabilityTable)).concat([" ",]);
     return header.map((key, index) => {
       return <th key={index}>{key.toUpperCase()}</th>
     });
@@ -135,24 +135,24 @@ function App() {
     if (isEditingProbabilities) {
       return (
         <tr key={index} style={{ textAlign: 'center' }}>
-          <td></td>
           <td>{index + 1}</td>
           <td><input type="number" disabled value={parseFloat((keyProbabilityTable.safe[index] * 100).toFixed(floatingPrecision))} /> %</td>
           <td><input type="number" defaultValue={keyProbabilityTable.leaked[index] * 100} onChange={(event) => updateKeyProbabilities('leaked', index, parseFloat(event.target.value))} /> %</td>
           <td><input type="number" defaultValue={keyProbabilityTable.lost[index] * 100} onChange={(event) => updateKeyProbabilities('lost', index, parseFloat(event.target.value))} /> %</td>
           <td><input type="number" defaultValue={keyProbabilityTable.stolen[index] * 100} onChange={(event) => updateKeyProbabilities('stolen', index, parseFloat(event.target.value))} /> %</td>
+          <td></td>
         </tr>
       );
     }
     else {
       return (
         <tr key={index} style={{ textAlign: 'center' }}>
-          <td style={{ alignItems: 'center' }}><Button variant='minty' size='sm' style={{ marginBottom: minusButtonBottomMarginPx }} onClick={() => removeKey(index)}>DEL</Button><Button style={{ marginLeft: copyKeyMarginLeftPx }} size='sm' variant='minty' onClick={() => duplicateKey(index)}>DUP</Button></td>
           <td>{index + 1}</td>
           <td>{toPercent(keyProbabilityTable.safe[index])}</td>
           <td>{toPercent(keyProbabilityTable.leaked[index])}</td>
           <td>{toPercent(keyProbabilityTable.lost[index])}</td>
           <td>{toPercent(keyProbabilityTable.stolen[index])}</td>
+          <td style={{ alignItems: 'center' }}><Button variant='minty' size='sm' style={{ marginBottom: minusButtonBottomMarginPx }} onClick={() => removeKey(index)}>DEL</Button><Button style={{ marginLeft: copyKeyMarginLeftPx }} size='sm' variant='minty' onClick={() => duplicateKey(index)}>DUP</Button></td>
         </tr>
       );
     }
