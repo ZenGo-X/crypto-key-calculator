@@ -12,19 +12,24 @@ import { Col, Container, Row } from 'react-bootstrap';
 import MetaTags from 'react-meta-tags';
 
 function App() {
-  const [keyNum, setKeyNum] = useState(1);
+  const [keyNum, setKeyNum] = useState(3);
   const [keyProbabilityTable, setKeyProbabilityTable] = useState({
-    safe: [0.7],
-    leaked: [0.05],
-    lost: [0.15],
-    stolen: [0.1]
+    safe: [0.7, 0.7, 0.7],
+    leaked: [0.05, 0.05, 0.05],
+    lost: [0.15, 0.15, 0.15],
+    stolen: [0.1, 0.1, 0.1]
   });
-  const [keyProbabilitiesUpdatedTable, setKeyProbabilitiesUpdatedTable] = useState({});
-  const [wallet, setWallet] = useState([]);
+  const [keyProbabilitiesUpdatedTable, setKeyProbabilitiesUpdatedTable] = useState({
+    safe: [0.7, 0.7, 0.7],
+    leaked: [0.05, 0.05, 0.05],
+    lost: [0.15, 0.15, 0.15],
+    stolen: [0.1, 0.1, 0.1]
+  });
+  const [wallet, setWallet] = useState([[0, 1], [1, 2]]);
   const keyStates = ['safe', 'leaked', 'lost', 'stolen'];
   const floatingPrecision = 8;
   const [combinationToAdd, setCombinationToAdd] = useState([]);
-  const [isEditingProbabilities, setIsEditingProbabilities] = useState(false);
+  const [isEditingProbabilities, setIsEditingProbabilities] = useState(true);
   let curOptimalWallet = [];
   let maxSuccessForWallet = 0;
   const [optimalWallet, setOptimalWallet] = useState([]);
@@ -63,27 +68,10 @@ function App() {
     keyProbabilitiesUpdatedTable['safe'][index] = 1 - probabilitiesSum;
     let tableClone = Object.assign({}, keyProbabilitiesUpdatedTable);
     setKeyProbabilitiesUpdatedTable(tableClone);
+    setKeyProbabilityTable(tableClone);
+    setOptimalWalletProb(0);
+    setOptimalWallet([]);
     setShowProbabilitiesError(false);
-  }
-
-  function toggleEditingMode() {
-    if (isEditingProbabilities) {
-      for (let i = 0; i < keyNum; i++) {
-        if (parseFloat((keyProbabilitiesUpdatedTable.safe[i] + keyProbabilitiesUpdatedTable.leaked[i] + keyProbabilitiesUpdatedTable.lost[i] + keyProbabilitiesUpdatedTable.stolen[i]).toFixed(floatingPrecision)) !== 1) {
-          setShowProbabilitiesError(true);
-          return;
-        }
-      }
-      setKeyProbabilityTable(keyProbabilitiesUpdatedTable);
-      setOptimalWalletProb(0);
-      setOptimalWallet([]);
-      setShowProbabilitiesError(false);
-    }
-    else {
-      setKeyProbabilitiesUpdatedTable(keyProbabilityTable);
-    }
-
-    setIsEditingProbabilities(!isEditingProbabilities);
   }
 
   function toPercent(probability) {
@@ -135,7 +123,7 @@ function App() {
     if (isEditingProbabilities) {
       return (
         <tr key={index} style={{ textAlign: 'center' }}>
-          <td>{index + 1}</td>
+          <td><Button variant="dark-lavender" style={{ marginRight: '5px' }}>{index + 1}</Button></td>
           <td><input type="number" disabled value={parseFloat((keyProbabilityTable.safe[index] * 100).toFixed(floatingPrecision))} /> %</td>
           <td><input type="number" defaultValue={keyProbabilityTable.leaked[index] * 100} onChange={(event) => updateKeyProbabilities('leaked', index, parseFloat(event.target.value))} /> %</td>
           <td><input type="number" defaultValue={keyProbabilityTable.lost[index] * 100} onChange={(event) => updateKeyProbabilities('lost', index, parseFloat(event.target.value))} /> %</td>
@@ -147,7 +135,7 @@ function App() {
     else {
       return (
         <tr key={index} style={{ textAlign: 'center' }}>
-          <td>{index + 1}</td>
+          <td><Button variant="dark-lavender" style={{ marginRight: '5px' }}>{index + 1}</Button></td>
           <td>{toPercent(keyProbabilityTable.safe[index])}</td>
           <td>{toPercent(keyProbabilityTable.leaked[index])}</td>
           <td>{toPercent(keyProbabilityTable.lost[index])}</td>
@@ -469,7 +457,7 @@ function App() {
       A wallet is successful if the owner can use it but an adversary can't.<br />
       More details <a href="blog post" style={{ color: '#E6E9FB' }}>here</a>.
       White paper <a href="tokenomics" style={{ color: '#E6E9FB' }}>here</a>.
-      No warranty; <a href="LICENSE" style={{ color: '#E6E9FB' }}>BSD license</a>. 
+      No warranty; <a href="LICENSE" style={{ color: '#E6E9FB' }}>BSD license</a>.
     </Alert>;
   }
 
@@ -480,13 +468,30 @@ function App() {
 
   document.body.style.backgroundColor = '#DFF0EF';
 
+  let disclaimerCardRow = <div></div>;
+  if (showSetKeysInfo) {
+    disclaimerCardRow = <Row style={{ marginLeft: marginHorizontalPx, marginRight: marginHorizontalPx }}>
+      <Col>
+        <Card style={{ marginTop: '10px' }}>
+          <Card.Body>
+            <Alert style={{ marginBottom: '0px' }} variant="lavender" onClose={() => setShowSetKeysInfo(false)} dismissible>
+              Compute the success rate of a crypto wallet based on the fault probabilities of its keys. <br />
+              A wallet is successful if the owner can use it but an adversary can't.<br />
+              More details <a href="blog post" style={{ color: '#E6E9FB' }}>here</a>.
+              White paper <a href="tokenomics" style={{ color: '#E6E9FB' }}>here</a>.
+              No warranty; <a href="LICENSE" style={{ color: '#E6E9FB' }}>BSD license</a>.
+            </Alert>
+          </Card.Body>
+        </Card>
+      </Col>
+    </Row>;
+  }
+
   let keyConfCard = (<Card style={{ marginTop: '20px' }}>
     <Card.Body>
       <Card.Title style={{ fontSize: '28px' }}>1. Set Key Probabilities</Card.Title>
 
       {warningMobile}
-
-      {infoSetKeys}
 
       <style type="text/css">
         {`
@@ -508,8 +513,7 @@ function App() {
       }
       `}
       </style>
-      <Button style={{ marginTop: '15px', marginBottom: '10px' }} size='sm' variant='minty' onClick={toggleEditingMode}>{isEditingProbabilities ? "Save changes" : "Edit key probabilities"}</Button>
-      <Table striped bordered hover responsive id='keyProbabilities'>
+      <Table striped bordered hover responsive id='keyProbabilities' style={{ marginTop: '15px' }}>
         <tbody>
           <tr>{renderTableHeader()}</tr>
           {keyProbInputs}
@@ -563,6 +567,7 @@ function App() {
   let cardsContainer = <div></div>;
   if (!isMobile) {
     cardsContainer = <Container fluid>
+      {disclaimerCardRow}
       <Row style={{ marginLeft: marginHorizontalPx, marginRight: marginHorizontalPx }}>
         <Col>{keyConfCard}</Col>
       </Row>
@@ -581,6 +586,7 @@ function App() {
   }
   else {
     cardsContainer = <Container fluid>
+      {disclaimerCardRow}
       <Row style={{ marginLeft: marginHorizontalPx, marginRight: marginHorizontalPx }}>
         <Col>{keyConfCard}</Col>
       </Row>
