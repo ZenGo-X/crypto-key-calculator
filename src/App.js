@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
 import Form from 'react-bootstrap/Form';
@@ -19,17 +19,10 @@ function App() {
     lost: [0.15, 0.15, 0.15],
     stolen: [0.1, 0.1, 0.1]
   });
-  const [keyProbabilitiesUpdatedTable, setKeyProbabilitiesUpdatedTable] = useState({
-    safe: [0.7, 0.7, 0.7],
-    leaked: [0.05, 0.05, 0.05],
-    lost: [0.15, 0.15, 0.15],
-    stolen: [0.1, 0.1, 0.1]
-  });
   const [wallet, setWallet] = useState([[0, 1], [1, 2]]);
   const keyStates = ['safe', 'leaked', 'lost', 'stolen'];
   const floatingPrecision = 8;
   const [combinationToAdd, setCombinationToAdd] = useState([]);
-  const [isEditingProbabilities, setIsEditingProbabilities] = useState(true);
   let curOptimalWallet = [];
   let maxSuccessForWallet = 0;
   const [optimalWallet, setOptimalWallet] = useState([]);
@@ -55,7 +48,7 @@ function App() {
     let probabilitiesSum = 0;
     for (let stateIter of keyStates) {
       if (stateIter !== 'safe' && stateIter !== state) {
-        probabilitiesSum += keyProbabilitiesUpdatedTable[stateIter][index];
+        probabilitiesSum += keyProbabilityTable[stateIter][index];
       }
     }
     probabilitiesSum += percent / 100;
@@ -64,10 +57,9 @@ function App() {
       setShowProbabilitiesError(true);
       return;
     }
-    keyProbabilitiesUpdatedTable[state][index] = percent / 100;
-    keyProbabilitiesUpdatedTable['safe'][index] = 1 - probabilitiesSum;
-    let tableClone = Object.assign({}, keyProbabilitiesUpdatedTable);
-    setKeyProbabilitiesUpdatedTable(tableClone);
+    keyProbabilityTable[state][index] = percent / 100;
+    keyProbabilityTable['safe'][index] = 1 - probabilitiesSum;
+    let tableClone = Object.assign({}, keyProbabilityTable);
     setKeyProbabilityTable(tableClone);
     setOptimalWalletProb(0);
     setOptimalWallet([]);
@@ -120,30 +112,16 @@ function App() {
   }
 
   function renderKeyProbInputRow(index) {
-    if (isEditingProbabilities) {
-      return (
-        <tr key={index} style={{ textAlign: 'center' }}>
-          <td><Button variant="dark-lavender" style={{ marginRight: '5px' }}>{index + 1}</Button></td>
-          <td><input type="number" disabled value={parseFloat((keyProbabilityTable.safe[index] * 100).toFixed(floatingPrecision))} /> %</td>
-          <td><input type="number" defaultValue={keyProbabilityTable.leaked[index] * 100} onChange={(event) => updateKeyProbabilities('leaked', index, parseFloat(event.target.value))} /> %</td>
-          <td><input type="number" defaultValue={keyProbabilityTable.lost[index] * 100} onChange={(event) => updateKeyProbabilities('lost', index, parseFloat(event.target.value))} /> %</td>
-          <td><input type="number" defaultValue={keyProbabilityTable.stolen[index] * 100} onChange={(event) => updateKeyProbabilities('stolen', index, parseFloat(event.target.value))} /> %</td>
-          <td style={{ alignItems: 'center' }}><Button variant='minty' size='sm' style={{ marginBottom: minusButtonBottomMarginPx }} onClick={() => removeKey(index)}>DEL</Button><Button style={{ marginLeft: copyKeyMarginLeftPx }} size='sm' variant='minty' onClick={() => duplicateKey(index)}>DUP</Button></td>
-        </tr>
-      );
-    }
-    else {
-      return (
-        <tr key={index} style={{ textAlign: 'center' }}>
-          <td><Button variant="dark-lavender" style={{ marginRight: '5px' }}>{index + 1}</Button></td>
-          <td>{toPercent(keyProbabilityTable.safe[index])}</td>
-          <td>{toPercent(keyProbabilityTable.leaked[index])}</td>
-          <td>{toPercent(keyProbabilityTable.lost[index])}</td>
-          <td>{toPercent(keyProbabilityTable.stolen[index])}</td>
-          <td style={{ alignItems: 'center' }}><Button variant='minty' size='sm' style={{ marginBottom: minusButtonBottomMarginPx }} onClick={() => removeKey(index)}>DEL</Button><Button style={{ marginLeft: copyKeyMarginLeftPx }} size='sm' variant='minty' onClick={() => duplicateKey(index)}>DUP</Button></td>
-        </tr>
-      );
-    }
+    return (
+      <tr key={index} style={{ textAlign: 'center' }}>
+        <td><Button variant="dark-lavender" style={{ marginRight: '5px' }}>{index + 1}</Button></td>
+        <td><input type="number" disabled value={parseFloat((keyProbabilityTable.safe[index] * 100).toFixed(floatingPrecision))} /> %</td>
+        <td><input type="number" defaultValue={keyProbabilityTable.leaked[index] * 100} onChange={(event) => updateKeyProbabilities('leaked', index, parseFloat(event.target.value))} /> %</td>
+        <td><input type="number" defaultValue={keyProbabilityTable.lost[index] * 100} onChange={(event) => updateKeyProbabilities('lost', index, parseFloat(event.target.value))} /> %</td>
+        <td><input type="number" defaultValue={keyProbabilityTable.stolen[index] * 100} onChange={(event) => updateKeyProbabilities('stolen', index, parseFloat(event.target.value))} /> %</td>
+        <td style={{ alignItems: 'center' }}><Button variant='minty' size='sm' style={{ marginBottom: minusButtonBottomMarginPx }} onClick={() => removeKey(index)}>DEL</Button><Button style={{ marginLeft: copyKeyMarginLeftPx }} size='sm' variant='minty' onClick={() => duplicateKey(index)}>DUP</Button></td>
+      </tr>
+    );
   }
 
   function ownerSuccessForScenarioAndWallet(walletArr, scenario) {
@@ -450,17 +428,6 @@ function App() {
     warnWalletReduced = <Alert variant="warning" onClose={() => setShowWalletReduced(false)} dismissible>The last key combination added caused the wallet to reduced, meaning reduntant key combinations have been removed since they have no effect on wallet security.</Alert>;
   }
 
-  let infoSetKeys = <div></div>;
-  if (showSetKeysInfo) {
-    infoSetKeys = <Alert style={{ marginTop: '5px' }} variant="lavender" onClose={() => setShowSetKeysInfo(false)} dismissible>
-      Compute the success rate of a crypto wallet based on the fault probabilities of its keys. <br />
-      A wallet is successful if the owner can use it but an adversary can't.<br />
-      More details <a href="blog post" style={{ color: '#E6E9FB' }}>here</a>.
-      White paper <a href="tokenomics" style={{ color: '#E6E9FB' }}>here</a>.
-      No warranty; <a href="LICENSE" style={{ color: '#E6E9FB' }}>BSD license</a>.
-    </Alert>;
-  }
-
   let warningMobile = <div></div>;
   if (showWarningMobile) {
     warningMobile = <Alert variant="warning" onClose={() => setShowWarningMobile(false)} dismissible><Alert.Heading>You are viewing this page on mobile!</Alert.Heading> <p>For a better experience view either on desktop or in landscape mode.</p></Alert>;
@@ -601,17 +568,6 @@ function App() {
       </Row>
     </Container>;
   }
-
-  const meta = {
-    title: 'Crypto Wallet Key Analyzer',
-    description: 'Analyze given a certain crypto wallet key distribution setting, the probability of its failure',
-    meta: {
-      charset: 'utf-8',
-      name: {
-        keywords: 'crypto,wallet,keys',
-      }
-    }
-  };
 
   return (
     <div style={{ backgroundColor: '#DFF0EF', fontFamily: 'AvenirNext-Medium' }}>
