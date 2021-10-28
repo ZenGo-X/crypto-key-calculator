@@ -1,7 +1,10 @@
 # Crypto Wallet Key Configuration Analyzer
 This app is a calculator that helps you analyze, given a certain crypto wallet key distribution setting, the probability of its failure.
 
-## Running the app
+## Deploying
+This repo is set up with Github Pages so that production builds of the app that are pushed to the `main` branch are automatically deployed to 
+
+## Running the app locally
 This is a simple react application.
 In order to run node must be installed, then simply run:
 ```
@@ -13,4 +16,6 @@ In order to build for production run:
 ```
 npm run build
 ```
-Then, in the `build` directory will be all the files needed to host the application.
+Then, in the `docs` directory will be all the files needed to host the application.
+
+To host the application locally run `python3 -m http.server`.
