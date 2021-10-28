@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/static/css/main.452cb750.chunk.css",
+    "main.js": "/static/js/main.68f640f6.chunk.js",
+    "main.js.map": "/static/js/main.68f640f6.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.610fb2e0.js",
+    "runtime-main.js.map": "/static/js/runtime-main.610fb2e0.js.map",
+    "static/css/2.c1256375.chunk.css": "/static/css/2.c1256375.chunk.css",
+    "static/js/2.2e195639.chunk.js": "/static/js/2.2e195639.chunk.js",
+    "static/js/2.2e195639.chunk.js.map": "/static/js/2.2e195639.chunk.js.map",
+    "index.html": "/index.html",
+    "static/css/2.c1256375.chunk.css.map": "/static/css/2.c1256375.chunk.css.map",
+    "static/css/main.452cb750.chunk.css.map": "/static/css/main.452cb750.chunk.css.map",
+    "static/js/2.2e195639.chunk.js.LICENSE.txt": "/static/js/2.2e195639.chunk.js.LICENSE.txt",
+    "static/media/index.css": "/static/media/AvenirNext-UltraLight.8784cad6.ttf",
+    "static/media/zengo_logo.3c70768c.svg": "/static/media/zengo_logo.3c70768c.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.610fb2e0.js",
+    "static/css/2.c1256375.chunk.css",
+    "static/js/2.2e195639.chunk.js",
+    "static/css/main.452cb750.chunk.css",
+    "static/js/main.68f640f6.chunk.js"
+  ]
+}
