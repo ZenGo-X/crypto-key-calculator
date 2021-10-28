@@ -16,8 +16,6 @@ In order to build for production run:
 ```
 npm run build
 ```
-| WARNING: the site is configured by default to be served on `/crypto-key-calculator/`. Change the `homepage` property in `package.json` to `/` when running the production build locally!|
-| --- |
 
 Then, in the `docs` directory will be all the files needed to host the application.
 
