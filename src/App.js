@@ -583,7 +583,7 @@ function App() {
         <meta name="description" content="Analyze given a certain crypto wallet key distribution setting, the probability of its failure" />
       </MetaTags>
 
-      <h1 style={{ marginLeft: marginHorizontalPx, marginRight: marginHorizontalPx, marginTop: '20px', textAlign: 'center', color: '#2C2F33' }}>Crypto Wallet Key Analyzer</h1>
+      <h1 style={{ marginLeft: marginHorizontalPx, marginRight: marginHorizontalPx, marginTop: '20px', textAlign: 'center', color: '#2C2F33' }}>Crypto-Wallet Designer (pre-alpha)</h1>
 
       {cardsContainer}
 
