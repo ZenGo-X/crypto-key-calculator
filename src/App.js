@@ -580,10 +580,10 @@ function App() {
 
       <MetaTags>
         <title>Crypto-Wallet Designer (pre-alpha)</title>
-        <meta property="og:title" content="Crypto-Wallet Designer (pre-alpha)" />
+        {/* <meta property="og:title" content="Crypto-Wallet Designer (pre-alpha)" />
         <meta property="og:image" content={ZengoLogo} />
         <meta name="description" content="Analyze given a certain crypto wallet key distribution setting, the probability of its failure" />
-        <meta name="og:description" content="Analyze given a certain crypto wallet key distribution setting, the probability of its failure" />
+        <meta property="og:description" content="Analyze given a certain crypto wallet key distribution setting, the probability of its failure" /> */}
       </MetaTags>
 
       <h1 style={{ marginLeft: marginHorizontalPx, marginRight: marginHorizontalPx, marginTop: '20px', textAlign: 'center', color: '#2C2F33' }}>Crypto-Wallet Designer (pre-alpha)</h1>
