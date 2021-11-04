@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import {React, useState} from 'react';
 import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
 import Form from 'react-bootstrap/Form';
@@ -25,8 +25,8 @@ function App() {
   const [combinationToAdd, setCombinationToAdd] = useState([]);
   let curOptimalWallet = [];
   let maxSuccessForWallet = 0;
-  const [optimalWallet, setOptimalWallet] = useState([]);
-  const [optimalWalletProb, setOptimalWalletProb] = useState(0);
+  const [optimalWallet, setOptimalWallet] = useState([[1, 2], [0, 2], [0, 1]]);
+  const [optimalWalletProb, setOptimalWalletProb] = useState(0.8155);
   const [showProbabilitiesError, setShowProbabilitiesError] = useState(false);
   const [showWalletStrWithErrors, setShowWalletStrWithErrors] = useState(false);
   const [showCantComputeOptimalWallet, setShowCantComputeOptimalWallet] = useState(false);
@@ -45,6 +45,10 @@ function App() {
   }
 
   function updateKeyProbabilities(state, index, percent) {
+    if (percent < 0 || percent > 100) {
+      return;
+    }
+
     let probabilitiesSum = 0;
     for (let stateIter of keyStates) {
       if (stateIter !== 'safe' && stateIter !== state) {
@@ -59,11 +63,16 @@ function App() {
     }
     keyProbabilityTable[state][index] = percent / 100;
     keyProbabilityTable['safe'][index] = 1 - probabilitiesSum;
-    let tableClone = Object.assign({}, keyProbabilityTable);
-    setKeyProbabilityTable(tableClone);
-    setOptimalWalletProb(0);
-    setOptimalWallet([]);
+    setKeyProbabilityTable(keyProbabilityTable);
     setShowProbabilitiesError(false);
+
+    if (keyNum <= 3) {
+      findOptimalWallet(keyNum);
+    }
+    else {
+      setOptimalWalletProb(0);
+      setOptimalWallet([]);
+    }
   }
 
   function toPercent(probability) {
@@ -71,15 +80,21 @@ function App() {
   }
 
   function duplicateKey(index) {
-    keyProbabilityTable.safe.push(keyProbabilityTable.safe[index]);
-    keyProbabilityTable.leaked.push(keyProbabilityTable.leaked[index]);
-    keyProbabilityTable.lost.push(keyProbabilityTable.lost[index]);
-    keyProbabilityTable.stolen.push(keyProbabilityTable.stolen[index]);
+    for (const keyState in keyProbabilityTable) {
+      if (Object.hasOwnProperty.call(keyProbabilityTable, keyState)) {
+        keyProbabilityTable[keyState] = keyProbabilityTable[keyState].concat([keyProbabilityTable[keyState][index]]);
+      }
+    }
 
+    if (keyNum + 1 <= 3) {
+      findOptimalWallet(keyNum + 1);
+    }
+    else {
+      setOptimalWalletProb(0);
+      setOptimalWallet([]);
+    }
     setKeyProbabilityTable(keyProbabilityTable);
     setKeyNum(keyNum + 1);
-    setOptimalWalletProb(0);
-    setOptimalWallet([]);
   }
 
   function removeKey(index) {
@@ -91,12 +106,19 @@ function App() {
         keyProbabilityTable[keyState] = keyProbabilityTable[keyState].slice(0, index).concat(keyProbabilityTable[keyState].slice(index + 1, keyNum));
       }
     }
+
+    if (keyNum - 1 <= 3) {
+      findOptimalWallet(keyNum - 1);
+    }
+    else {
+      setOptimalWalletProb(0);
+      setOptimalWallet([]);
+    }
+
     setKeyProbabilityTable(keyProbabilityTable);
     setKeyNum(keyNum - 1);
     setWallet([]);
     setCombinationToAdd([]);
-    setOptimalWalletProb(0);
-    setOptimalWallet([]);
   }
 
   function addKey() {
@@ -105,10 +127,16 @@ function App() {
     keyProbabilityTable.lost.push(keyProbabilityTable.lost[keyNum - 1]);
     keyProbabilityTable.stolen.push(keyProbabilityTable.stolen[keyNum - 1]);
 
+    if (keyNum + 1 <= 3) {
+      findOptimalWallet(keyNum + 1);
+    }
+    else {
+      setOptimalWalletProb(0);
+      setOptimalWallet([]);
+    }
+
     setKeyProbabilityTable(keyProbabilityTable);
     setKeyNum(keyNum + 1);
-    setOptimalWalletProb(0);
-    setOptimalWallet([]);
   }
 
   function renderKeyProbInputRow(index) {
@@ -116,10 +144,10 @@ function App() {
       <tr key={index} style={{ textAlign: 'center' }}>
         <td><Button variant="dark-lavender" style={{ marginRight: '5px' }}>{index + 1}</Button></td>
         <td><input type="number" disabled value={parseFloat((keyProbabilityTable.safe[index] * 100).toFixed(floatingPrecision))} /> %</td>
-        <td><input type="number" defaultValue={keyProbabilityTable.leaked[index] * 100} onChange={(event) => updateKeyProbabilities('leaked', index, parseFloat(event.target.value))} /> %</td>
-        <td><input type="number" defaultValue={keyProbabilityTable.lost[index] * 100} onChange={(event) => updateKeyProbabilities('lost', index, parseFloat(event.target.value))} /> %</td>
-        <td><input type="number" defaultValue={keyProbabilityTable.stolen[index] * 100} onChange={(event) => updateKeyProbabilities('stolen', index, parseFloat(event.target.value))} /> %</td>
-        <td style={{ alignItems: 'center' }}><Button variant='minty' size='sm' style={{ marginBottom: minusButtonBottomMarginPx }} onClick={() => removeKey(index)}>DEL</Button><Button style={{ marginLeft: copyKeyMarginLeftPx }} size='sm' variant='minty' onClick={() => duplicateKey(index)}>DUP</Button></td>
+        <td><input type="number" value={parseFloat((keyProbabilityTable.leaked[index] * 100).toFixed(floatingPrecision))} onChange={(event) => updateKeyProbabilities('leaked', index, parseFloat(event.target.value))} /> %</td>
+        <td><input type="number" value={parseFloat((keyProbabilityTable.lost[index] * 100).toFixed(floatingPrecision))} onChange={(event) => updateKeyProbabilities('lost', index, parseFloat(event.target.value))} /> %</td>
+        <td><input type="number" value={parseFloat((keyProbabilityTable.stolen[index] * 100).toFixed(floatingPrecision))} onChange={(event) => updateKeyProbabilities('stolen', index, parseFloat(event.target.value))} /> %</td>
+        <td style={{ alignItems: 'center' }}><Button variant='minty' size='sm' style={{ marginBottom: minusButtonBottomMarginPx }} onClick={() => { removeKey(index); }}>DEL</Button><Button style={{ marginLeft: copyKeyMarginLeftPx }} size='sm' variant='minty' onClick={() => { duplicateKey(index); }}>DUP</Button></td>
       </tr>
     );
   }
@@ -168,13 +196,13 @@ function App() {
     return scenarioProb;
   }
 
-  function computeProbabilityForWallet(walletArr) {
+  function computeProbabilityForWallet(walletArr, keyNumber) {
     let walletSuccessProb = 0;
 
     // Ahead lies some base 4 magic to enumerate all scenarios
-    for (let i = 0; i < 4 ** keyNum; i++) {
+    for (let i = 0; i < 4 ** keyNumber; i++) {
       let scenario = i.toString(4);
-      scenario = scenario.padStart(keyNum, '0');
+      scenario = scenario.padStart(keyNumber, '0');
       if (ownerSuccessForScenarioAndWallet(walletArr, scenario) && adversaryFailureForScenarioAndWallet(walletArr, scenario)) {
         walletSuccessProb += scenarioProbability(scenario);
       }
@@ -211,11 +239,11 @@ function App() {
     return false;
   }
 
-  function convertBinaryWalletToWallet(binWallet) {
+  function convertBinaryWalletToWallet(binWallet, keyNumber) {
     let wallet = [];
     for (let binComb of binWallet) {
       let combination = [];
-      for (let i = 0; i < keyNum; i++) {
+      for (let i = 0; i < keyNumber; i++) {
         if ((binComb & (1 << i)) > 0) {
           combination.push(i);
         }
@@ -228,30 +256,30 @@ function App() {
     return wallet;
   }
 
-  function enumerateWalletProbabilities(baseWallet, prevCombination) {
-    for (let curCombination = prevCombination + 1; curCombination < 2 ** keyNum; curCombination++) {
+  function enumerateWalletProbabilities(baseWallet, prevCombination, keyNumber) {
+    for (let curCombination = prevCombination + 1; curCombination < 2 ** keyNumber; curCombination++) {
       if (!combinationCoveredInWallet(baseWallet, curCombination)) {
         let curWallet = [curCombination].concat(baseWallet);
-        let convertedWallet = convertBinaryWalletToWallet(curWallet);
-        let walletProb = computeProbabilityForWallet(convertedWallet);
+        let convertedWallet = convertBinaryWalletToWallet(curWallet, keyNumber);
+        let walletProb = computeProbabilityForWallet(convertedWallet, keyNumber);
         if (walletProb > maxSuccessForWallet) {
           maxSuccessForWallet = walletProb;
           curOptimalWallet = convertedWallet;
         }
 
-        enumerateWalletProbabilities(curWallet, curCombination);
+        enumerateWalletProbabilities(curWallet, curCombination, keyNumber);
       }
     }
   }
 
-  function findOptimalWallet() {
-    if (keyNum > 4) {
+  function findOptimalWallet(keyNumber) {
+    if (keyNumber > 4) {
       setShowCantComputeOptimalWallet(true);
       return;
     }
 
     // recursively enumerate all wallets 
-    enumerateWalletProbabilities([], 0);
+    enumerateWalletProbabilities([], 0, keyNumber);
     setOptimalWallet(curOptimalWallet);
     setOptimalWalletProb(maxSuccessForWallet);
   }
@@ -487,7 +515,7 @@ function App() {
         </tbody>
       </Table>
       {alertProbabilitiesError}
-      <Button size='sm' variant='minty' onClick={addKey}>+</Button>
+      <Button size='sm' variant='minty' onClick={() => { addKey(); }}>+</Button>
     </Card.Body>
   </Card>);
 
@@ -515,7 +543,7 @@ function App() {
       <div style={{ fontSize: '25px', fontWeight: 'bold', marginTop: '15px', marginBottom: '10px' }}>{displayWallet(wallet)}</div>
       {warnWalletReduced}
 
-      <div style={{ fontSize: '25px' }}>Success Probability: {toPercent(computeProbabilityForWallet(wallet))}</div>
+      <div style={{ fontSize: '25px' }}>Success Probability: {toPercent(computeProbabilityForWallet(wallet, keyNum))}</div>
 
     </Card.Body>
   </Card>);
@@ -523,7 +551,7 @@ function App() {
   let optimalWalletCard = (<Card style={{ marginBottom: '20px' }}>
     <Card.Body>
       <Card.Title style={{ fontSize: '28px' }}>Optimal Wallet &nbsp;
-        <Button style={{ marginBottom: '5px' }} variant='minty' size='sm' onClick={() => { setOptimalWallet([]); setOptimalWalletProb(0); findOptimalWallet(); }}>Compute</Button>
+        <Button style={{ marginBottom: '5px' }} variant='minty' size='sm' onClick={() => { setOptimalWallet([]); setOptimalWalletProb(0); findOptimalWallet(keyNum); }}>Compute</Button>
         {alertCantComputeOptimalWallet}
       </Card.Title>
       <div style={{ fontSize: '25px', fontWeight: 'bold' }}>{displayWallet(optimalWallet)}</div>
