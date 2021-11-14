@@ -5,6 +5,7 @@ import Form from 'react-bootstrap/Form';
 import Card from 'react-bootstrap/Card';
 import Alert from 'react-bootstrap/Alert';
 import ZengoLogo from './assets/zengo_logo.svg';
+import GitHubLogo from './assets/GitHub.png';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { isMobile } from 'react-device-detect';
 import './App.css';
@@ -614,7 +615,8 @@ function App() {
 
       {cardsContainer}
 
-      <p style={{ textAlign: 'right', marginRight: marginHorizontalPx }}>powered by <a href="https://zengo.com/"><img src={ZengoLogo} style={{ height: '6vmin' }} alt="ZenGo" /></a></p>
+      <p style={{ textAlign: 'right', marginRight: marginHorizontalPx, marginBottom: '0px', marginTop:'7px' }}>powered by <a href="https://zengo.com/"><img src={ZengoLogo} style={{ height: '6vmin' }} alt="ZenGo" /></a></p>
+      <p style={{ textAlign: 'right', marginRight: marginHorizontalPx }}>code on <a href="https://github.com/ZenGo-X/crypto-key-calculator"><img src={GitHubLogo} style={{ height: '2vmin', marginLeft: '5px' }} alt="Github" /></a></p>
     </div>
   );
 }
