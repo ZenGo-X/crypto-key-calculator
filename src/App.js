@@ -474,7 +474,7 @@ function App() {
               Compute the success rate of a crypto wallet based on the fault probabilities of its keys. <br />
               A wallet is successful if the owner can use it but an adversary can't.<br />
               More details <a href="https://ittayeyal.github.io/2021-11-16-keyManagement/" style={{ color: '#E6E9FB' }}>here</a>.
-              White paper <a href="tokenomics" style={{ color: '#E6E9FB' }}>here</a>.
+              White paper <a href="https://eprint.iacr.org/2021/4224" style={{ color: '#E6E9FB' }}>here</a>.
               No warranty; <a href="LICENSE" style={{ color: '#E6E9FB' }}>BSD license</a>.
             </Alert>
           </Card.Body>
