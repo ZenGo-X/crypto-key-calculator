@@ -516,7 +516,6 @@ function App() {
         </tbody>
       </Table>
       {alertProbabilitiesError}
-//       <Button size='sm' variant='minty' onClick={() => { addKey(); }}>+</Button>
     </Card.Body>
   </Card>);
 
