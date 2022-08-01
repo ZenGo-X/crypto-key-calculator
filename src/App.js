@@ -279,7 +279,7 @@ function App() {
       return;
     }
 
-    // recursively enumerate all wallets 
+    // recursively enumerate all wallets
     enumerateWalletProbabilities([], 0, keyNumber);
     setOptimalWallet(curOptimalWallet);
     setOptimalWalletProb(maxSuccessForWallet);
@@ -420,6 +420,7 @@ function App() {
     for (let keyIndex of combinationToAdd) {
       displayCurrentState += (keyIndex + 1).toString() + " and ";
     }
+    displayCurrentState = displayCurrentState.slice(0, -5);
 
     let buttons = [];
     for (let i = 0; i < keyNum; i++) {
@@ -555,7 +556,7 @@ function App() {
         {alertCantComputeOptimalWallet}
       </Card.Title>
       <div style={{ fontSize: '25px', fontWeight: 'bold' }}>{displayWallet(optimalWallet)}</div>
-      <div style={{ fontSize: '25px' }}>{toPercent(optimalWalletProb)}</div>
+      <div style={{ fontSize: '25px' }}>Success Probability: {toPercent(optimalWalletProb)}</div>
     </Card.Body>
   </Card>);
 
