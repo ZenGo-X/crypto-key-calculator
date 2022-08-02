@@ -139,7 +139,8 @@ int main (){
 70 15 5 10
 70 5 10 15
 
-emcc key_generator.cpp -O3 -o key_generator.wasm -s TOTAL_MEMORY=134217728
+emcc wallet_gen_deterministic.cpp -O3 -o wallet_gen_deterministic.wasm -s TOTAL_MEMORY=134217728
 */
 	
 	
+
