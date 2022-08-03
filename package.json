@@ -6,6 +6,7 @@
   "dependencies": {
     "@fortawesome/free-brands-svg-icons": "^6.1.2",
     "@fortawesome/react-fontawesome": "^0.2.0",
+    "@remix-project/remix-solidity": "^0.5.1",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
@@ -18,9 +19,9 @@
     "react-meta-tags": "^1.0.1",
     "react-scripts": "4.0.3",
     "react-select": "^5.1.0",
-    "solc-js": "^1.0.1",
     "typescript": "^4.7.4",
-    "web-vitals": "^1.1.2"
+    "web-vitals": "^1.1.2",
+    "webpack": "^4.44.2"
   },
   "scripts": {
     "start": "react-scripts start",
