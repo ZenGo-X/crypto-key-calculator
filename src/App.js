@@ -123,24 +123,6 @@ function App() {
     setCombinationToAdd([]);
   }
 
-  function addKey() {
-    keyProbabilityTable.safe.push(keyProbabilityTable.safe[keyNum - 1]);
-    keyProbabilityTable.leaked.push(keyProbabilityTable.leaked[keyNum - 1]);
-    keyProbabilityTable.lost.push(keyProbabilityTable.lost[keyNum - 1]);
-    keyProbabilityTable.stolen.push(keyProbabilityTable.stolen[keyNum - 1]);
-
-    if (keyNum + 1 <= 3) {
-      findOptimalWallet(keyNum + 1);
-    }
-    else {
-      setOptimalWalletProb(0);
-      setOptimalWallet([]);
-    }
-
-    setKeyProbabilityTable(keyProbabilityTable);
-    setKeyNum(keyNum + 1);
-  }
-
   function renderKeyProbInputRow(index) {
     return (
       <tr key={index} style={{ textAlign: 'center' }}>
