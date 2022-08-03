@@ -3,7 +3,11 @@ import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEthereum  } from '@fortawesome/free-brands-svg-icons';
-import { Compiler } from '@remix-project/remix-solidity';
+//import { Compiler } from '@remix-project/remix-solidity';
+// nico here
+import * as wrapper from 'solc/wrapper';
+
+console.log(wrapper)
 
 declare let window: any
 
@@ -28,14 +32,13 @@ const Metamask = () => {
       }
     };
 
-    let worker = new Worker('worker.js', {type: 'module'});
+    let worker = new Worker( new URL('worker.js', import.meta.url), {type: 'module'});
     worker.postMessage(10)
     worker.onmessage = (message) => {
       console.log(message.data);
     }
 
-    const objectC = new Compiler(require("./Lock.sol"));
-    console.log(objectC)
+    //const objectC = new Compiler(require("./Lock.sol"));
 
     //const output = JSON.parse(solc.compile(JSON.stringify(input)));
     //const version = 'v0.5.1-stable-2018.12.03'
