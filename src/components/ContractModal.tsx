@@ -7,9 +7,10 @@ import Form from 'react-bootstrap/Form';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEthereum  } from '@fortawesome/free-brands-svg-icons';
 
+declare let window: any;
+
 function ContractModal(props: any) {
   const [show, setShow] = useState(props.show);
-  const signer = props.signer;
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -187,6 +188,10 @@ function ContractModal(props: any) {
       }
     }));
     worker.addEventListener('message', async (message) => {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      await provider.send("eth_requestAccounts", []);
+      const signer = provider.getSigner();
+
       const result = JSON.parse(message.data);
       const contractCompiled = result.contracts[""].SampleThreeWallet;
       const bytecode = contractCompiled.evm.bytecode;
@@ -195,7 +200,7 @@ function ContractModal(props: any) {
       const factory = new ethers.ContractFactory(abi, bytecode, signer);
       const contract = await factory.deploy([
         "0xF5DF2bd8A867C0A166f5FF6661D8483C6DC48db9",
-        "0xF5DF2bd8A867C0A166f5FF6661D8483C6DC48d89"
+        "0x5Ca56569D5CC5082c39a2a031a0c631431638b97"
       ]);
       console.log(contract);
     });
