@@ -1,7 +1,9 @@
-/// <reference lib="webworker" />
 /* eslint-disable no-restricted-globals */
-import { ethers } from "ethers";
+/* eslint-disable no-undef */
+importScripts(['https://solc-bin.ethereum.org/emscripten-wasm32/solc-emscripten-wasm32-latest.js'])
 
+let compile = Module.cwrap('solidity_compile', 'string', ['string', 'number', 'number']);
 
-
-console.log('hello, is the worker here')
+addEventListener('message', (event) => {
+    postMessage(compile(event.data, 0, 0));
+});

@@ -11,7 +11,7 @@ import { isMobile } from 'react-device-detect';
 import './App.css';
 import { Col, Container, Row } from 'react-bootstrap';
 import MetaTags from 'react-meta-tags';
-import Metamask from './components/Metamask';
+import ContractModal from './components/ContractModal';
 
 function App() {
   const [keyNum, setKeyNum] = useState(3);
@@ -528,7 +528,7 @@ function App() {
       {warnWalletReduced}
 
       <div style={{ fontSize: '25px' }}>Success Probability: {toPercent(computeProbabilityForWallet(wallet, keyNum))}</div>
-      <Metamask></Metamask>
+      <ContractModal numberOfKeys="5"></ContractModal>
     </Card.Body>
   </Card>);
 
@@ -540,7 +540,7 @@ function App() {
       </Card.Title>
       <div style={{ fontSize: '25px', fontWeight: 'bold' }}>{displayWallet(optimalWallet)}</div>
       <div style={{ fontSize: '25px' }}>Success Probability: {toPercent(optimalWalletProb)}</div>
-      <Metamask></Metamask>
+      <ContractModal numberOfKeys="5"></ContractModal>
     </Card.Body>
   </Card>);
 
