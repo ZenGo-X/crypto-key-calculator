@@ -33,6 +33,9 @@
     "extends": [
       "react-app",
       "react-app/jest"
+    ],
+    "ignorePatterns": [
+      "src/solver.mjs"
     ]
   },
   "browserslist": {

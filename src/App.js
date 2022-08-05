@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
 import Form from 'react-bootstrap/Form';
@@ -11,6 +11,7 @@ import { isMobile } from 'react-device-detect';
 import './App.css';
 import { Col, Container, Row } from 'react-bootstrap';
 import ContractModal from './components/ContractModal';
+import solverModule from "./solver.mjs";
 
 function App() {
   const [keyNum, setKeyNum] = useState(3);
@@ -24,19 +25,25 @@ function App() {
   const keyStates = ['safe', 'leaked', 'lost', 'stolen'];
   const floatingPrecision = 8;
   const [combinationToAdd, setCombinationToAdd] = useState([]);
-  let curOptimalWallet = [];
-  let maxSuccessForWallet = 0;
-  const [optimalWallet, setOptimalWallet] = useState([[1, 2], [0, 2], [0, 1]]);
-  const [optimalWalletProb, setOptimalWalletProb] = useState(0.8155);
+  const [optimalWalletString, setOptimalWalletString] = useState("()");
+  const [optimalWalletProb, setOptimalWalletProb] = useState(0);
   const [showProbabilitiesError, setShowProbabilitiesError] = useState(false);
   const [showWalletStrWithErrors, setShowWalletStrWithErrors] = useState(false);
   const [showCantComputeOptimalWallet, setShowCantComputeOptimalWallet] = useState(false);
   const [showWalletReduced, setShowWalletReduced] = useState(false);
   const [showSetKeysInfo, setShowSetKeysInfo] = useState(true);
   const [showWarningMobile, setShowWarningMobile] = useState(isMobile);
+  const [findWallet, setFindWallet] = useState();
   const marginHorizontalPx = isMobile ? '5px' : '100px';
   const minusButtonBottomMarginPx = isMobile ? '2px' : '0px';
   const copyKeyMarginLeftPx = isMobile ? '0px' : '10px';
+
+  useEffect(
+      () => {
+        solverModule().then((Module) => {
+          setFindWallet(() => Module.cwrap("findWallet", "string", ["number", "array"]));
+        });
+      }, []);
 
   function renderTableHeader() {
     let header = ["Key ID"].concat(Object.keys(keyProbabilityTable)).concat([" ",]);
@@ -72,7 +79,7 @@ function App() {
     }
     else {
       setOptimalWalletProb(0);
-      setOptimalWallet([]);
+      setOptimalWalletString("()");
     }
   }
 
@@ -92,7 +99,7 @@ function App() {
     }
     else {
       setOptimalWalletProb(0);
-      setOptimalWallet([]);
+      setOptimalWalletString("()");
     }
     setKeyProbabilityTable(keyProbabilityTable);
     setKeyNum(keyNum + 1);
@@ -113,7 +120,7 @@ function App() {
     }
     else {
       setOptimalWalletProb(0);
-      setOptimalWallet([]);
+      setOptimalWalletString("()");
     }
 
     setKeyProbabilityTable(keyProbabilityTable);
@@ -242,32 +249,40 @@ function App() {
     return wallet;
   }
 
-  function enumerateWalletProbabilities(baseWallet, prevCombination, keyNumber) {
-    for (let curCombination = prevCombination + 1; curCombination < 2 ** keyNumber; curCombination++) {
-      if (!combinationCoveredInWallet(baseWallet, curCombination)) {
-        let curWallet = [curCombination].concat(baseWallet);
-        let convertedWallet = convertBinaryWalletToWallet(curWallet, keyNumber);
-        let walletProb = computeProbabilityForWallet(convertedWallet, keyNumber);
-        if (walletProb > maxSuccessForWallet) {
-          maxSuccessForWallet = walletProb;
-          curOptimalWallet = convertedWallet;
-        }
-
-        enumerateWalletProbabilities(curWallet, curCombination, keyNumber);
-      }
-    }
-  }
-
   function findOptimalWallet(keyNumber) {
-    if (keyNumber > 4) {
+    if (keyNumber > 6) {
       setShowCantComputeOptimalWallet(true);
       return;
     }
 
-    // recursively enumerate all wallets
-    enumerateWalletProbabilities([], 0, keyNumber);
-    setOptimalWallet(curOptimalWallet);
-    setOptimalWalletProb(maxSuccessForWallet);
+    let probabilityArray = [];
+
+    for (let i = 0; i < keyNumber; i++)
+    {
+      for (let j = 0; j < keyStates.length; j++)
+      {
+        probabilityArray.push(keyProbabilityTable[keyStates[j]][i]*100);
+      }
+    }
+
+    let probability = -1;
+    let optimalWalletString = "()"
+
+    if(findWallet) {
+      const passArray = new Uint8Array(new Float64Array(probabilityArray).buffer)
+      let optimalWallet = findWallet(keyNumber, passArray);
+      console.log(optimalWallet);
+      const trimmedOptimalWallet = optimalWallet.replace("return ", "");
+      optimalWalletString = trimmedOptimalWallet.split(";")[0]
+        .replaceAll("&&", "and")
+        .replaceAll("||", "or")
+        .replaceAll("k[", "")
+        .replaceAll("]", "");
+      probability = parseFloat(trimmedOptimalWallet.split(";")[1].replace(",", ""));
+    }
+
+    setOptimalWalletString(optimalWalletString);
+    setOptimalWalletProb(probability);
   }
 
   function parseWalletFromString(walletStr) {
@@ -381,6 +396,7 @@ function App() {
         setShowWalletReduced(true);
         break;
       }
+
       else if (curWallet[i].every(elem => combination.includes(elem))) {
         combinationReduced = true;
         setShowWalletReduced(true);
@@ -537,10 +553,12 @@ function App() {
   let optimalWalletCard = (<Card style={{ marginBottom: '20px' }}>
     <Card.Body>
       <Card.Title style={{ fontSize: '28px' }}>Optimal Wallet &nbsp;
-        <Button style={{ marginBottom: '5px' }} variant='minty' size='sm' onClick={() => { setOptimalWallet([]); setOptimalWalletProb(0); findOptimalWallet(keyNum); }}>Compute</Button>
+        <Button style={{ marginBottom: '5px' }} variant='minty' size='sm' onClick={() => { setOptimalWalletString("()"); setOptimalWalletProb(0); findOptimalWallet(keyNum); }}>
+          Compute
+        </Button>
         {alertCantComputeOptimalWallet}
       </Card.Title>
-      <div style={{ fontSize: '25px', fontWeight: 'bold' }}>{displayWallet(optimalWallet)}</div>
+      <div style={{ fontSize: '25px', fontWeight: 'bold' }}>{optimalWalletString}</div>
       <div style={{ fontSize: '25px' }}>Success Probability: {toPercent(optimalWalletProb)}</div>
       <ContractModal keyNum={keyNum}></ContractModal>
     </Card.Body>

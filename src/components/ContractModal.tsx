@@ -187,6 +187,7 @@ function ContractModal(props: any) {
         outputSelection: { "*": {"*": ['evm.bytecode.object','abi']}}
       }
     }));
+
     worker.addEventListener('message', async (message) => {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       await provider.send("eth_requestAccounts", []);
