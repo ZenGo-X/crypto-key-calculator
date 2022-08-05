@@ -1,4 +1,5 @@
-import {React, useState} from 'react';
+import {useState, useEffect} from 'react';
+import{ ethers } from 'ethers';
 import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
 import Form from 'react-bootstrap/Form';
@@ -38,6 +39,7 @@ function App() {
   const marginHorizontalPx = isMobile ? '5px' : '100px';
   const minusButtonBottomMarginPx = isMobile ? '2px' : '0px';
   const copyKeyMarginLeftPx = isMobile ? '0px' : '10px';
+  const [signer, setSig] = useState(null);
 
   function renderTableHeader() {
     let header = ["Key ID"].concat(Object.keys(keyProbabilityTable)).concat([" ",]);
@@ -416,6 +418,18 @@ function App() {
       <div style={{ marginBottom: '15px' }}>{buttons}</div></div>)
   }
 
+
+  async function initializeMetamask() {
+    console.log('nicolas')
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    await provider.send("eth_requestAccounts", []);
+    const signer = provider.getSigner();
+    setSig(signer);
+  }
+  useEffect(() => {
+    initializeMetamask();
+  }, []);
+
   let keyProbInputs = [];
   for (let i = 0; i < keyNum; i++) {
     keyProbInputs.push(renderKeyProbInputRow(i));
@@ -540,7 +554,7 @@ function App() {
       </Card.Title>
       <div style={{ fontSize: '25px', fontWeight: 'bold' }}>{displayWallet(optimalWallet)}</div>
       <div style={{ fontSize: '25px' }}>Success Probability: {toPercent(optimalWalletProb)}</div>
-      <ContractModal numberOfKeys="5"></ContractModal>
+      <ContractModal numberOfKeys="5" signer={signer}></ContractModal>
     </Card.Body>
   </Card>);
 

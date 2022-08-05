@@ -1,5 +1,5 @@
 import{ ethers } from 'ethers';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
@@ -7,10 +7,9 @@ import Form from 'react-bootstrap/Form';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEthereum  } from '@fortawesome/free-brands-svg-icons';
 
-declare let window:any;
-
 function ContractModal(props: any) {
   const [show, setShow] = useState(props.show);
+  const signer = props.signer;
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -27,7 +26,7 @@ function ContractModal(props: any) {
     let content = [];
     for (var i=0; i<n; i++){
       content.push(
-        <Form.Group className="mb-3" controlId="formBasicEmail">
+        <Form.Group className="mb-3" controlId="formBasicEmail" key={'reactKey'+i}>
           <Form.Label>{`Key ${i+1}:`}</Form.Label>
           <Form.Control id={i.toString()} onChange={changeInput} type="text" placeholder="Input your public or public address" />
         </Form.Group>
@@ -36,16 +35,6 @@ function ContractModal(props: any) {
     return content;
   }
 
-  const [sig, setSig] = useState<any>();
-  async function initializeMetamask() {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    await provider.send("eth_requestAccounts", []);
-    const signer = provider.getSigner();
-    setSig(signer);
-  }
-  useEffect(() => {
-    initializeMetamask();
-  }, []);
   async function compileAndDeploy () {
 
     const contractCode = `
@@ -188,6 +177,7 @@ function ContractModal(props: any) {
           return ${booleanFormula}
         }
     */
+   // 'return k[3] && k[2] && k[4],81.55'.split(',')[0].slice('return '.length).replaceAll('&&','and')
     const worker = new Worker("worker.js");
     worker.postMessage(JSON.stringify({
       language: "Solidity",
@@ -199,12 +189,15 @@ function ContractModal(props: any) {
     }));
     worker.addEventListener('message', async (message) => {
       const result = JSON.parse(message.data);
-      const contractCompiled = result.contracts[""].FinalWallet;
+      const contractCompiled = result.contracts[""].SampleThreeWallet;
       const bytecode = contractCompiled.evm.bytecode;
       const abi = contractCompiled.abi;
 
-      const factory = new ethers.ContractFactory(abi, bytecode, sig);
-      const contract = await factory.deploy();
+      const factory = new ethers.ContractFactory(abi, bytecode, signer);
+      const contract = await factory.deploy([
+        "0xF5DF2bd8A867C0A166f5FF6661D8483C6DC48db9",
+        "0xF5DF2bd8A867C0A166f5FF6661D8483C6DC48d89"
+      ]);
       console.log(contract);
     });
   }
