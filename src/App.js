@@ -132,7 +132,10 @@ function App() {
         <td><input type="number" value={parseFloat((keyProbabilityTable.leaked[index] * 100).toFixed(floatingPrecision))} onChange={(event) => updateKeyProbabilities('leaked', index, parseFloat(event.target.value))} /> %</td>
         <td><input type="number" value={parseFloat((keyProbabilityTable.lost[index] * 100).toFixed(floatingPrecision))} onChange={(event) => updateKeyProbabilities('lost', index, parseFloat(event.target.value))} /> %</td>
         <td><input type="number" value={parseFloat((keyProbabilityTable.stolen[index] * 100).toFixed(floatingPrecision))} onChange={(event) => updateKeyProbabilities('stolen', index, parseFloat(event.target.value))} /> %</td>
-        <td style={{ alignItems: 'center' }}><Button variant='minty' size='sm' style={{ marginBottom: minusButtonBottomMarginPx }} onClick={() => { removeKey(index); }}>DEL</Button><Button style={{ marginLeft: copyKeyMarginLeftPx }} size='sm' variant='minty' onClick={() => { duplicateKey(index); }}>DUP</Button></td>
+        <td style={{ alignItems: 'center' }}>
+          <Button variant='minty' size='sm' style={{ marginBottom: minusButtonBottomMarginPx }} onClick={() => { removeKey(index); }}>DEL</Button>
+          <Button style={{ marginLeft: copyKeyMarginLeftPx }} size='sm' variant='minty' onClick={() => { duplicateKey(index); }}>DUP</Button>
+        </td>
       </tr>
     );
   }
@@ -541,7 +544,7 @@ function App() {
       {warnWalletReduced}
 
       <div style={{ fontSize: '25px' }}>Success Probability: {toPercent(computeProbabilityForWallet(wallet, keyNum))}</div>
-      <ContractModal numberOfKeys="5"></ContractModal>
+      <ContractModal keyNum={keyNum}></ContractModal>
     </Card.Body>
   </Card>);
 
@@ -553,7 +556,7 @@ function App() {
       </Card.Title>
       <div style={{ fontSize: '25px', fontWeight: 'bold' }}>{displayWallet(optimalWallet)}</div>
       <div style={{ fontSize: '25px' }}>Success Probability: {toPercent(optimalWalletProb)}</div>
-      <ContractModal numberOfKeys="5" signer={signer}></ContractModal>
+      <ContractModal keyNum={keyNum} signer={signer}></ContractModal>
     </Card.Body>
   </Card>);
 
