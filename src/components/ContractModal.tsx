@@ -16,20 +16,20 @@ function ContractModal(props: any) {
   const handleShow = () => setShow(true);
 
   const [inputs, setInputs] = useState({});
+
   function changeInput(e: any){
-    console.log(e.target.value)
-    console.log(e.target.id)
     let newInput: any = inputs;
     newInput[e.target.value] = e.target.id;
     setInputs(newInput);
   }
+
   function createInputs(n: Number){
     let content = [];
     for (var i=0; i<n; i++){
       content.push(
         <Form.Group className="mb-3" controlId="formBasicEmail" key={'reactKey'+i}>
           <Form.Label>{`Key ${i+1}:`}</Form.Label>
-          <Form.Control id={i.toString()} onChange={changeInput} type="text" placeholder="Input your public or public address" />
+          <Form.Control id={i.toString()} onChange={changeInput} type="text" placeholder="Input public addresses" />
         </Form.Group>
       );
     }
@@ -37,7 +37,6 @@ function ContractModal(props: any) {
   }
 
   async function compileAndDeploy () {
-
     const contractCode = `
     // SPDX-License-Identifier: MIT
     pragma solidity ^0.8.15;
@@ -219,7 +218,7 @@ function ContractModal(props: any) {
         </Modal.Header>
         <Modal.Body>
         <Form>
-          { createInputs(props.numberOfKeys) }
+          { createInputs(props.keyNum) }
         </Form>
         </Modal.Body>
         <Modal.Footer>
