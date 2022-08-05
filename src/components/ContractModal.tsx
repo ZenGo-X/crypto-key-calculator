@@ -15,11 +15,12 @@ function ContractModal(props: any) {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  const [inputs, setInputs] = useState({});
+  const [inputs, setInputs] = useState<any>({});
 
   function changeInput(e: any){
+    const target = e.target;
     let newInput: any = inputs;
-    newInput[e.target.value] = e.target.id;
+    newInput[target.id] = target.value;
     setInputs(newInput);
   }
 
@@ -34,6 +35,15 @@ function ContractModal(props: any) {
       );
     }
     return content;
+  }
+
+  function getInputKeys(){
+    let keys: any[] = [];
+    for(var i=0; i<props.keyNum; i++){
+      const value = inputs[i];
+      keys.push(value);
+    }
+    return keys;
   }
 
   async function compileAndDeploy () {
@@ -198,10 +208,8 @@ function ContractModal(props: any) {
       const abi = contractCompiled.abi;
 
       const factory = new ethers.ContractFactory(abi, bytecode, signer);
-      const contract = await factory.deploy([
-        "0xF5DF2bd8A867C0A166f5FF6661D8483C6DC48db9",
-        "0x5Ca56569D5CC5082c39a2a031a0c631431638b97"
-      ]);
+      const inputKeys = getInputKeys();
+      const contract = await factory.deploy(inputKeys);
       console.log(contract);
     });
   }
