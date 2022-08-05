@@ -49,3 +49,8 @@ That's it!
 
 Wait a couple of minutes and the changes should be deployed to https://walletdesign.dev
 
+
+
+## Compile the web worker (temporary fix):
+Run this command to get the worker.js compiled by webpack in main.js:
+```npx webpack-cli ./.\public\worker.js -o public```
