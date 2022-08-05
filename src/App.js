@@ -11,7 +11,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { isMobile } from 'react-device-detect';
 import './App.css';
 import { Col, Container, Row } from 'react-bootstrap';
-import MetaTags from 'react-meta-tags';
 import ContractModal from './components/ContractModal';
 
 function App() {
@@ -604,10 +603,6 @@ function App() {
         integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU"
         crossOrigin="anonymous"
       />
-
-      <MetaTags>
-        <title>Crypto-Wallet Designer (pre-alpha)</title>
-      </MetaTags>
 
       <h1 style={{ marginLeft: marginHorizontalPx, marginRight: marginHorizontalPx, marginTop: '20px', textAlign: 'center', color: '#2C2F33' }}>Crypto-Wallet Designer (pre-alpha)</h1>
 
