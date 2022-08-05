@@ -16,14 +16,12 @@ function ContractModal(props: any) {
   const handleShow = () => setShow(true);
 
   const [inputs, setInputs] = useState<any>({});
-
   function changeInput(e: any){
     const target = e.target;
     let newInput: any = inputs;
     newInput[target.id] = target.value;
     setInputs(newInput);
   }
-
   function createInputs(n: Number){
     let content = [];
     for (var i=0; i<n; i++){
@@ -36,7 +34,6 @@ function ContractModal(props: any) {
     }
     return content;
   }
-
   function getInputKeys(){
     let keys: any[] = [];
     for(var i=0; i<props.keyNum; i++){
@@ -46,8 +43,10 @@ function ContractModal(props: any) {
     return keys;
   }
 
-  async function compileAndDeploy () {
-    const contractCode = `
+  const [contractAddress, setContractAddres] = useState('');
+
+
+  const contractCodeInitial = `
     // SPDX-License-Identifier: MIT
     pragma solidity ^0.8.15;
 
@@ -188,6 +187,9 @@ function ContractModal(props: any) {
         }
     */
    // 'return k[3] && k[2] && k[4],81.55'.split(',')[0].slice('return '.length).replaceAll('&&','and')
+   const [contractCode, setContractCode] = useState(contractCodeInitial);
+
+  async function compileAndDeploy () {
     const worker = new Worker("worker.js");
     worker.postMessage(JSON.stringify({
       language: "Solidity",
@@ -211,6 +213,7 @@ function ContractModal(props: any) {
       const inputKeys = getInputKeys();
       const contract = await factory.deploy(inputKeys);
       console.log(contract);
+      setContractAddres(contract.address);
     });
   }
 
@@ -228,6 +231,13 @@ function ContractModal(props: any) {
         <Form>
           { createInputs(props.keyNum) }
         </Form>
+        { contractAddress === '' ?
+          <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
+            <Form.Label>Your wallet code is:</Form.Label>
+            <Form.Control as="textarea" rows={10} defaultValue={contractCode}/>
+          </Form.Group>
+          :
+          <div>Your wallet is deployed at: {contractAddress}</div>}
         </Modal.Body>
         <Modal.Footer>
           <Button
