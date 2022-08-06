@@ -223,33 +223,6 @@ function App() {
     return walletString;
   }
 
-  function combinationCoveredInWallet(wallet, newCombination) {
-    for (let combination of wallet) {
-      if (combination & newCombination === combination) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  function convertBinaryWalletToWallet(binWallet, keyNumber) {
-    let wallet = [];
-    for (let binComb of binWallet) {
-      let combination = [];
-      for (let i = 0; i < keyNumber; i++) {
-        if ((binComb & (1 << i)) > 0) {
-          combination.push(i);
-        }
-      }
-      if (combination.length > 0) {
-        wallet.push(combination);
-      }
-    }
-
-    return wallet;
-  }
-
   function findOptimalWallet(keyNumber) {
     if (keyNumber > 6) {
       setShowCantComputeOptimalWallet(true);
