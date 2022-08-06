@@ -37,4 +37,4 @@ jobs:
         if: ${{ github.ref == 'refs/heads/gh-pages-deployment' }}
         with:
           deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
-          publish_dir: .
+          publish_dir: ./docs
