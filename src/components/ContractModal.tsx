@@ -1,9 +1,8 @@
 import{ ethers } from 'ethers';
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEthereum  } from '@fortawesome/free-brands-svg-icons';
 
@@ -16,12 +15,14 @@ function ContractModal(props: any) {
   const handleShow = () => setShow(true);
 
   const [inputs, setInputs] = useState<any>({});
+
   function changeInput(e: any){
     const target = e.target;
     let newInput: any = inputs;
     newInput[target.id] = target.value;
     setInputs(newInput);
   }
+
   function createInputs(n: Number){
     let content = [];
     for (var i=0; i<n; i++){
@@ -34,6 +35,7 @@ function ContractModal(props: any) {
     }
     return content;
   }
+
   function getInputKeys(){
     let keys: any[] = [];
     for(var i=0; i<props.keyNum; i++){
@@ -43,10 +45,11 @@ function ContractModal(props: any) {
     return keys;
   }
 
-  const [contractAddress, setContractAddres] = useState('');
+  const [contractAddress, setContractAddress] = useState('');
+  const [contractCode, setContractCode] = useState("Optimize a wallet to view contract");
 
-
-  const contractCodeInitial = `
+  const getContractCode = (optimalWalletString: any) => {
+    return `
     // SPDX-License-Identifier: MIT
     pragma solidity ^0.8.15;
 
@@ -176,21 +179,20 @@ function ContractModal(props: any) {
         }
 
         function boolAuthorized(bool[] memory k) internal pure override returns (bool) {
-            return (k[0] && k[1]) || k[2];
+            ${optimalWalletString.split(',')[0]}
         }
     }
     `;
-    /*
-    const booleanFormula = roiCode();
-    function boolAuthorized(bool[] memory k) internal pure override returns (bool){
-          return ${booleanFormula}
-        }
-    */
-   // 'return k[3] && k[2] && k[4],81.55'.split(',')[0].slice('return '.length).replaceAll('&&','and')
-   const [contractCode, setContractCode] = useState(contractCodeInitial);
+  }
+
+  useEffect(
+    () => {
+      setContractCode(getContractCode(props.optimalWalletString));
+    }, [props.optimalWalletString]);
 
   async function compileAndDeploy () {
     const worker = new Worker("worker.js");
+    const contractCode = getContractCode(props.optimalWalletString);
     worker.postMessage(JSON.stringify({
       language: "Solidity",
       sources: {"": { content: contractCode }},
@@ -213,8 +215,7 @@ function ContractModal(props: any) {
       const factory = new ethers.ContractFactory(abi, bytecode, signer);
       const inputKeys = getInputKeys();
       const contract = await factory.deploy(inputKeys);
-      console.log(contract);
-      setContractAddres(contract.address);
+      setContractAddress(contract.address);
     });
   }
 
