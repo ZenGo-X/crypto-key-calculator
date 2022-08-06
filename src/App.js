@@ -227,7 +227,7 @@ function App() {
   }
 
   function findOptimalWallet(keyNumber) {
-    if (keyNumber > 6) {
+    if (keyNumber > 12) {
       setShowCantComputeOptimalWallet(true);
       return;
     }
@@ -412,6 +412,14 @@ function App() {
       <div style={{ marginBottom: '15px' }}>{buttons}</div></div>)
   }
 
+  const formatWalletTitle = () => {
+    if (keyNum > 6) {
+      return "Semi-Optimal Wallet"
+    } else {
+      return "Optimal Wallet"
+    }
+  };
+
   let keyProbInputs = [];
   for (let i = 0; i < keyNum; i++) {
     keyProbInputs.push(renderKeyProbInputRow(i));
@@ -509,7 +517,7 @@ function App() {
       <br />
       <Button style={{ marginBottom: '20px' }} variant='minty' size='sm' onClick={() => { setCombinationToAdd([]) }}>Clear combination</Button>
 
-      <Card.Text style={{ fontSize: '25px' }}>Or enter Wallet as String</Card.Text>
+      <Card.Text style={{ fontSize: '25px' }}>Or enter wallet as string:</Card.Text>
       <Form.Control type="text" size='sm' placeholder='(1 and 2) or (2 and 3)' onChange={(event) => parseWalletFromString(event.target.value)} />
       {alertWalletStrWithErrors}
     </Card.Body>
@@ -530,7 +538,7 @@ function App() {
 
   let optimalWalletCard = (<Card style={{ marginBottom: '20px' }}>
     <Card.Body>
-      <Card.Title style={{ fontSize: '28px' }}>Optimal Wallet &nbsp;
+      <Card.Title style={{ fontSize: '28px' }}>{formatWalletTitle()} &nbsp;
         <Button style={{ marginBottom: '5px' }} variant='minty' size='sm' onClick={() => { setOptimalWalletString("()"); setOptimalWalletProb(0); findOptimalWallet(keyNum); }}>
           Compute
         </Button>
@@ -589,12 +597,25 @@ function App() {
         crossOrigin="anonymous"
       />
 
-      <h1 style={{ marginLeft: marginHorizontalPx, marginRight: marginHorizontalPx, marginTop: '20px', textAlign: 'center', color: '#2C2F33' }}>Crypto-Wallet Designer (pre-alpha)</h1>
+      <h1 style={{ marginLeft: marginHorizontalPx, marginRight: marginHorizontalPx, marginTop: '20px', textAlign: 'center', color: '#2C2F33' }}>
+        Strongly Walletz
+      </h1>
 
       {cardsContainer}
 
-      <p style={{ textAlign: 'right', marginRight: marginHorizontalPx, marginBottom: '0px', marginTop:'7px' }}>powered by <a href="https://zengo.com/"><img src={ZengoLogo} style={{ height: '6vmin' }} alt="ZenGo" /></a></p>
-      <p style={{ textAlign: 'right', marginRight: marginHorizontalPx }}>code on <a href="https://github.com/ZenGo-X/crypto-key-calculator"><img src={GitHubLogo} style={{ height: '2vmin', marginLeft: '5px' }} alt="Github" /></a></p>
+      <p style={{ textAlign: 'right', marginRight: marginHorizontalPx, marginBottom: '0px', marginTop:'7px' }}>Previously powered by <a href="https://zengo.com/"><img src={ZengoLogo} style={{ height: '6vmin' }} alt="ZenGo" /></a></p>
+      <p style={{ textAlign: 'right', marginRight: marginHorizontalPx }}>code on <a href="https://github.com/Crypto-Wallet-Designer/crypto-key-calculator"><img src={GitHubLogo} style={{ height: '2vmin', marginLeft: '5px' }} alt="Github" /></a></p>
+
+      <div style={{
+        width: "100%",
+        height: "15vh",
+        bottom: 0,
+        backgroundColor: "white",
+        borderTop: "1px solid #aaaaaa"
+      }}>
+        <p style={{marginTop: "5vh", textAlign: "center"}}>Created by Ittay Eyal, Mohammad Rezaei, Nicolas Serrano, Roi Bar-Zur, Lulu Zhou, Zerui Cheng, Shutong Qu, Kristian Gaylord</p>
+        <p style={{textAlign: "center"}}>This website is a fork of the original research @ http://walletdesign.dev</p>
+      </div>
     </div>
   );
 }
