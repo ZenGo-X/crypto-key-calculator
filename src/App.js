@@ -26,6 +26,7 @@ function App() {
   const floatingPrecision = 8;
   const [combinationToAdd, setCombinationToAdd] = useState([]);
   const [optimalWalletString, setOptimalWalletString] = useState("()");
+  const [rawOptimalWalletString, setRawOptimalWalletString] = useState("return k[0];");
   const [optimalWalletProb, setOptimalWalletProb] = useState(0);
   const [showProbabilitiesError, setShowProbabilitiesError] = useState(false);
   const [showWalletStrWithErrors, setShowWalletStrWithErrors] = useState(false);
@@ -267,11 +268,11 @@ function App() {
 
     let probability = -1;
     let optimalWalletString = "()"
+    let optimalWallet = "return k[0]";
 
     if(findWallet) {
       const passArray = new Uint8Array(new Float64Array(probabilityArray).buffer)
-      let optimalWallet = findWallet(keyNumber, passArray);
-      console.log(optimalWallet);
+      optimalWallet = findWallet(keyNumber, passArray);
       const trimmedOptimalWallet = optimalWallet.replace("return ", "");
       optimalWalletString = trimmedOptimalWallet.split(";")[0]
         .replaceAll("&&", "and")
@@ -281,6 +282,7 @@ function App() {
       probability = parseFloat(trimmedOptimalWallet.split(";")[1].replace(",", ""));
     }
 
+    setRawOptimalWalletString(optimalWallet);
     setOptimalWalletString(optimalWalletString);
     setOptimalWalletProb(probability);
   }
@@ -546,7 +548,7 @@ function App() {
       {warnWalletReduced}
 
       <div style={{ fontSize: '25px' }}>Success Probability: {toPercent(computeProbabilityForWallet(wallet, keyNum))}</div>
-      <ContractModal keyNum={keyNum}></ContractModal>
+      <ContractModal keyNum={keyNum} optimalWalletString={rawOptimalWalletString}></ContractModal>
     </Card.Body>
   </Card>);
 
@@ -560,7 +562,7 @@ function App() {
       </Card.Title>
       <div style={{ fontSize: '25px', fontWeight: 'bold' }}>{optimalWalletString}</div>
       <div style={{ fontSize: '25px' }}>Success Probability: {toPercent(optimalWalletProb)}</div>
-      <ContractModal keyNum={keyNum}></ContractModal>
+      <ContractModal keyNum={keyNum} optimalWalletString={rawOptimalWalletString}></ContractModal>
     </Card.Body>
   </Card>);
 
