@@ -41,7 +41,7 @@ function ContractModal(props: any) {
 
   function getInputKeys(){
     let keys: any[] = [];
-    for(var i=0; i<props.keyNum; i++){
+    for (let i=0; i<props.keyNum; i++){
       const value = inputs[i];
       keys.push(value);
     }
@@ -224,6 +224,14 @@ function ContractModal(props: any) {
     });
   }
 
+  const displayDefaultWarning = (optimalWalletString: any) => {
+    if (optimalWalletString === "return k[0];") {
+      return <h1 style={{color: "red"}}>Yo! Default Wallet!! Authorizes only on 1st key!</h1>
+    } else {
+      return <div/>
+    }
+  }
+
   return (
     <>
       <Button variant='dark-lavender' onClick={handleShow}>
@@ -235,6 +243,7 @@ function ContractModal(props: any) {
           <Modal.Title>Deploy your wallet with your keys</Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          {displayDefaultWarning(props.optimalWalletString)}
         <Form>
           { createInputs(props.keyNum) }
         </Form>

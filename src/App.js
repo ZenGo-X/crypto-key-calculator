@@ -226,6 +226,26 @@ function App() {
     return walletString;
   }
 
+  const displayWalletToBooleanString = (walletArr) => {
+    let walletString = "return ";
+    if (walletArr.length === 0 || walletArr[0].length === 0) {
+      return "return k[0];";
+    }
+
+    for (let combination of walletArr) {
+      walletString += " ( ";
+      for (let keyIndex of combination) {
+        walletString += `k[${(keyIndex).toString()}] && `;
+      }
+      walletString = walletString.slice(0, -4);
+      walletString += " ) ";
+      walletString += " || ";
+    }
+
+    walletString = walletString.slice(0, -3);
+    return walletString + ";";
+  }
+
   function findOptimalWallet(keyNumber) {
     if (keyNumber > 12) {
       setShowCantComputeOptimalWallet(true);
@@ -414,9 +434,9 @@ function App() {
 
   const formatWalletTitle = () => {
     if (keyNum > 6) {
-      return "Semi-Optimal Wallet"
+      return "4. Semi-Optimal Wallet"
     } else {
-      return "Optimal Wallet"
+      return "4. Optimal Wallet"
     }
   };
 
@@ -532,7 +552,7 @@ function App() {
       {warnWalletReduced}
 
       <div style={{ fontSize: '25px' }}>Success Probability: {toPercent(computeProbabilityForWallet(wallet, keyNum))}</div>
-      <ContractModal keyNum={keyNum} optimalWalletString={rawOptimalWalletString}></ContractModal>
+      <ContractModal keyNum={keyNum} optimalWalletString={displayWalletToBooleanString(wallet)}/>
     </Card.Body>
   </Card>);
 
@@ -546,7 +566,7 @@ function App() {
       </Card.Title>
       <div style={{ fontSize: '25px', fontWeight: 'bold' }}>{optimalWalletString}</div>
       <div style={{ fontSize: '25px' }}>Success Probability: {toPercent(optimalWalletProb)}</div>
-      <ContractModal keyNum={keyNum} optimalWalletString={rawOptimalWalletString}></ContractModal>
+      <ContractModal keyNum={keyNum} optimalWalletString={rawOptimalWalletString}/>
     </Card.Body>
   </Card>);
 
