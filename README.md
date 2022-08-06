@@ -1,5 +1,6 @@
 # Crypto-Wallet Designer
 This app is a calculator that helps you analyze, given a certain crypto wallet key distribution setting, the probability of its failure.
+Available online at: https://crypto-wallet-designer.github.io/crypto-key-calculator/
 
 ## Running the app locally
 This is a simple react application.
