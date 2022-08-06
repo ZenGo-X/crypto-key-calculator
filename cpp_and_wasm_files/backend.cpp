@@ -1,4 +1,5 @@
 #include <bitset>
+#include <cstring>
 #include <sstream>
 
 using namespace std;
@@ -8,12 +9,11 @@ extern "C" {
 #define ull unsigned long long
 #define N 6
 
-double p[7][5], pa[65], pb[65];
+double p[7][5];
 double prb[65][65];
-ull st_set[8000005], pattern;
+ull st_set[8000005];
 bool acc[65];
 
-double maxn = -1.0;
 int n, num;
 
 double glb_maxn = -1;
@@ -142,7 +142,7 @@ inline void work(int num, double *probs, ostringstream* output_stream) {
       }
       prob *= p[(j >> 1)][sta];
     }
-    prb[na][nb] += prob; // BUG: if you keep calling this method, it accumulates probabilities
+    prb[na][nb] += prob;
   }
 
   enumerate(0, 0, output_stream);
@@ -152,6 +152,14 @@ inline void work(int num, double *probs, ostringstream* output_stream) {
 }
 
 char* findWallet(int n, double *p) {
+	
+  glb_maxn = -1;
+  glb_pat = 0;
+  num = 0;
+  memset(prb, 0, sizeof(prb));
+  memset(acc, 0, sizeof(acc));
+  
+  
   ostringstream *output_stream = new ostringstream();
 
   work(n, p, output_stream);
