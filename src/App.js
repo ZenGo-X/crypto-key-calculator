@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
 import Form from 'react-bootstrap/Form';
@@ -54,33 +54,36 @@ function App() {
   }
 
   function updateKeyProbabilities(state, index, percent) {
-    if (percent < 0 || percent > 100) {
-      return;
-    }
+    let newProbabilityTable = {
+      ...keyProbabilityTable
+    };
 
-    let probabilitiesSum = 0;
-    for (let stateIter of keyStates) {
-      if (stateIter !== 'safe' && stateIter !== state) {
-        probabilitiesSum += keyProbabilityTable[stateIter][index];
+    if (!percent) {
+      newProbabilityTable[state][index] = -1;
+    } else {
+      let probabilitiesSum = 0;
+
+      for (let stateIter of keyStates) {
+        if (stateIter !== 'safe' && stateIter !== state) {
+          probabilitiesSum += keyProbabilityTable[stateIter][index];
+        }
       }
-    }
-    probabilitiesSum += percent / 100;
-    probabilitiesSum = parseFloat(probabilitiesSum.toFixed(floatingPrecision));
-    if (probabilitiesSum >= 1) {
-      setShowProbabilitiesError(true);
-      return;
-    }
-    keyProbabilityTable[state][index] = percent / 100;
-    keyProbabilityTable['safe'][index] = 1 - probabilitiesSum;
-    setKeyProbabilityTable(keyProbabilityTable);
-    setShowProbabilitiesError(false);
 
-    if (keyNum <= 3) {
-      findOptimalWallet(keyNum);
+      probabilitiesSum += percent / 100;
+      probabilitiesSum = parseFloat(probabilitiesSum.toFixed(floatingPrecision));
+
+      newProbabilityTable[state][index] = percent / 100;
+      newProbabilityTable['safe'][index] = 1 - probabilitiesSum;
     }
-    else {
-      setOptimalWalletProb(0);
-      setOptimalWalletString("()");
+
+    setKeyProbabilityTable(newProbabilityTable);
+  }
+
+  function probabilityToDisplayValue(probability) {
+    if (probability >= 0) {
+      return parseFloat(probability).toFixed(0);
+    } else {
+      return "";
     }
   }
 
@@ -134,10 +137,10 @@ function App() {
     return (
       <tr key={index} style={{ textAlign: 'center' }}>
         <td><Button variant="dark-lavender" style={{ marginRight: '5px' }}>{index + 1}</Button></td>
-        <td><input type="number" disabled value={parseFloat((keyProbabilityTable.safe[index] * 100).toFixed(floatingPrecision))} /> %</td>
-        <td><input type="number" value={parseFloat((keyProbabilityTable.leaked[index] * 100).toFixed(floatingPrecision))} onChange={(event) => updateKeyProbabilities('leaked', index, parseFloat(event.target.value))} /> %</td>
-        <td><input type="number" value={parseFloat((keyProbabilityTable.lost[index] * 100).toFixed(floatingPrecision))} onChange={(event) => updateKeyProbabilities('lost', index, parseFloat(event.target.value))} /> %</td>
-        <td><input type="number" value={parseFloat((keyProbabilityTable.stolen[index] * 100).toFixed(floatingPrecision))} onChange={(event) => updateKeyProbabilities('stolen', index, parseFloat(event.target.value))} /> %</td>
+        <td><input type="number" disabled value={probabilityToDisplayValue(keyProbabilityTable.safe[index] * 100)} /> %</td>
+        <td><input type="number" value={probabilityToDisplayValue(keyProbabilityTable.leaked[index] * 100)} onChange={(event) => updateKeyProbabilities('leaked', index, event.target.value)} /> %</td>
+        <td><input type="number" value={probabilityToDisplayValue(keyProbabilityTable.lost[index] * 100)} onChange={(event) => updateKeyProbabilities('lost', index, event.target.value)} /> %</td>
+        <td><input type="number" value={probabilityToDisplayValue(keyProbabilityTable.stolen[index] * 100)} onChange={(event) => updateKeyProbabilities('stolen', index, event.target.value)} /> %</td>
         <td style={{ alignItems: 'center' }}>
           <Button variant='minty' size='sm' style={{ marginBottom: minusButtonBottomMarginPx }} onClick={() => { removeKey(index); }}>DEL</Button>
           <Button style={{ marginLeft: copyKeyMarginLeftPx }} size='sm' variant='minty' onClick={() => { duplicateKey(index); }}>DUP</Button>
@@ -496,7 +499,7 @@ function App() {
     </Card.Body>
   </Card>);
 
-  let walletConfCard = (<Card style={{ marginTop: '20px' }}>
+  let walletConfCard = (<Card style={{ marginTop: '20px', height: '91.5%' }}>
     <Card.Body>
       <Card.Title style={{ fontSize: '28px' }}>2. Set Wallet Configuration</Card.Title>
       <Card.Text style={{ fontSize: '15px', color: 'gray' }}>Choose keys then click "Add combination to wallet".</Card.Text>
