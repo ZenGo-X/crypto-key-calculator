@@ -98,15 +98,15 @@ function App() {
       }
     }
 
-    if (keyNum + 1 <= 3) {
-      findOptimalWallet(keyNum + 1);
+    if (keyNum <= 3) {
+      findOptimalWallet(keyNum);
     }
     else {
       setOptimalWalletProb(0);
       setOptimalWalletString("()");
     }
     setKeyProbabilityTable(keyProbabilityTable);
-    setKeyNum(keyNum + 1);
+    setKeyNum(keyNum);
   }
 
   function removeKey(index) {
@@ -115,7 +115,7 @@ function App() {
     }
     for (const keyState in keyProbabilityTable) {
       if (Object.hasOwnProperty.call(keyProbabilityTable, keyState)) {
-        keyProbabilityTable[keyState] = keyProbabilityTable[keyState].slice(0, index).concat(keyProbabilityTable[keyState].slice(index + 1, keyNum));
+        keyProbabilityTable[keyState] = keyProbabilityTable[keyState].slice(0, index).concat(keyProbabilityTable[keyState].slice(index, keyNum));
       }
     }
 
@@ -136,7 +136,7 @@ function App() {
   function renderKeyProbInputRow(index) {
     return (
       <tr key={index} style={{ textAlign: 'center' }}>
-        <td><Button variant="dark-lavender" style={{ marginRight: '5px' }}>{index + 1}</Button></td>
+        <td><Button variant="dark-lavender" style={{ marginRight: '5px' }}>{index}</Button></td>
         <td><input type="number" disabled value={probabilityToDisplayValue(keyProbabilityTable.safe[index] * 100)} /> %</td>
         <td><input type="number" value={probabilityToDisplayValue(keyProbabilityTable.leaked[index] * 100)} onChange={(event) => updateKeyProbabilities('leaked', index, event.target.value)} /> %</td>
         <td><input type="number" value={probabilityToDisplayValue(keyProbabilityTable.lost[index] * 100)} onChange={(event) => updateKeyProbabilities('lost', index, event.target.value)} /> %</td>
@@ -216,7 +216,7 @@ function App() {
     for (let combination of walletArr) {
       walletString += " ( ";
       for (let keyIndex of combination) {
-        walletString += (keyIndex + 1).toString() + " and ";
+        walletString += (keyIndex).toString() + " and ";
       }
       walletString = walletString.slice(0, -4);
       walletString += " ) ";
@@ -397,14 +397,14 @@ function App() {
   function displayCombinationEditor() {
     let displayCurrentState = "";
     for (let keyIndex of combinationToAdd) {
-      displayCurrentState += (keyIndex + 1).toString() + " and ";
+      displayCurrentState += (keyIndex).toString() + " and ";
     }
     displayCurrentState = displayCurrentState.slice(0, -5);
 
     let buttons = [];
     for (let i = 0; i < keyNum; i++) {
       if (!combinationToAdd.includes(i)) {
-        buttons.push(<Button variant="dark-lavender" style={{ marginRight: '5px' }} onClick={(event) => addToCombination(i)}>{i + 1}</Button>);
+        buttons.push(<Button variant="dark-lavender" style={{ marginRight: '5px' }} onClick={(event) => addToCombination(i)}>{i}</Button>);
       }
     }
 
@@ -518,7 +518,7 @@ function App() {
       <Button style={{ marginBottom: '20px' }} variant='minty' size='sm' onClick={() => { setCombinationToAdd([]) }}>Clear combination</Button>
 
       <Card.Text style={{ fontSize: '25px' }}>Or enter wallet as string:</Card.Text>
-      <Form.Control type="text" size='sm' placeholder='(1 and 2) or (2 and 3)' onChange={(event) => parseWalletFromString(event.target.value)} />
+      <Form.Control type="text" size='sm' placeholder='(0 and 1) or (1 and 2)' onChange={(event) => parseWalletFromString(event.target.value)} />
       {alertWalletStrWithErrors}
     </Card.Body>
   </Card>);
