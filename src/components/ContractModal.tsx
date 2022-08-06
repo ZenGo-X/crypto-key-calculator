@@ -16,7 +16,6 @@ function ContractModal(props: any) {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const handleResultClose = () =>  setShowResult(false);
-  const handleResultShow = () => setShowResult(true);
 
   const [inputs, setInputs] = useState<any>({});
 
@@ -262,7 +261,9 @@ function ContractModal(props: any) {
           <div>
             <h3>Your wallet is deployed at:</h3>
             <h3>
-              <a href={`https://goerli.etherscan.io/address/${contractAddress}`} target="_blank">{contractAddress}</a>
+              <a href={`https://goerli.etherscan.io/address/${contractAddress}`} target="_blank" rel="noopener noreferrer">
+                {contractAddress}
+              </a>
             </h3>
             <Confetti style={{width: '100%'}}/>
           </div>

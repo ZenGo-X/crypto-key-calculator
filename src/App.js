@@ -608,12 +608,47 @@ function App() {
 
       <div style={{
         width: "100%",
-        height: "15vh",
+        height: "18vh",
         bottom: 0,
         backgroundColor: "white",
         borderTop: "1px solid #aaaaaa"
       }}>
-        <p style={{marginTop: "5vh", textAlign: "center"}}>Created by Ittay Eyal, Mohammad Rezaei, Nicolas Serrano, Roi Bar-Zur, Lulu Zhou, Zerui Cheng, Shutong Qu, Kristian Gaylord</p>
+        <p style={{marginTop: "5vh", textAlign: "center"}}>Created by:</p>
+        <div>
+          <p style={{textAlign: "center"}}>
+            <a href="https://webee.technion.ac.il/people/ittay/" target="_blank" rel="noopener noreferrer">
+              Ittay Eyal
+            </a>
+            , &nbsp;
+            <a href="https://github.com/moh-eulith/" target="_blank" rel="noopener noreferrer">
+              Mohammad Rezaei
+            </a>
+            , &nbsp;
+            <a href="https://github.com/" target="_blank" rel="noopener noreferrer">
+              Nicolas Serrano
+            </a>
+            , &nbsp;
+            <a href="https://roibarzur.github.io/" target="_blank" rel="noopener noreferrer">
+              Roi Bar-Zur
+            </a>
+            , &nbsp;
+            <a href="https://doris-lessing.github.io/luluzhou.github.io/" target="_blank" rel="noopener noreferrer">
+              Lulu Zhou
+            </a>
+            , &nbsp;
+            <a href="https://zerui-cheng.com/" target="_blank" rel="noopener noreferrer">
+              Zerui Cheng
+            </a>
+            , &nbsp;
+            <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" rel="noopener noreferrer">
+              Shutong Qu
+            </a>
+            , &nbsp;
+            <a href="https://github.com/kristian1108" target="_blank" rel="noopener noreferrer">
+              Kristian Gaylord
+            </a>
+          </p>
+        </div>
         <p style={{textAlign: "center"}}>This website is a fork of the original research @ http://walletdesign.dev</p>
       </div>
     </div>
