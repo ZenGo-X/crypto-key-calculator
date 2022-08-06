@@ -1,4 +1,6 @@
 #include <bitset>
+#include <time.h>
+#include <math.h>
 #include <sstream>
 
 using namespace std;
@@ -6,19 +8,24 @@ using namespace std;
 extern "C" {
 
 #define ull unsigned long long
-#define N 6
+#define N 12
 
-double p[7][5];
-double prb[65][65];
+const double search_time = 10.0;
+
+const int SZ = (1 << N);
+int que[SZ + 1];
+double p[N + 1][5];
+double prb[SZ + 1][SZ + 1];
+
 ull st_set[8000005];
-bool acc[65];
+bool acc[SZ + 1];
 
 int n, num;
 
 double glb_maxn = -1;
 ull glb_pat = 0;
 
-void enumerate(int cur, ull sta, ostringstream* output_stream) {
+void enumerate(int cur, ull sta) {
   if (cur == (1 << n)) {
     st_set[++num] = sta;
     return;
@@ -31,10 +38,10 @@ void enumerate(int cur, ull sta, ostringstream* output_stream) {
     }
   }
   sta |= (1ull << cur);
-  enumerate(cur + 1, sta, output_stream);
+  enumerate(cur + 1, sta);
   if (!tag) {
     sta ^= (1ull << cur);
-    enumerate(cur + 1, sta, output_stream);
+    enumerate(cur + 1, sta);
   }
 }
 
@@ -72,7 +79,7 @@ inline void check() {
   return;
 }
 
-inline void op_pattern(ull pattern, ostringstream* output_stream) {
+inline void op_pattern_1(ull pattern, ostringstream* output_stream) {
   *output_stream << "return ";
   int cnt = 0;
   if (pattern & 1ull) {
@@ -113,6 +120,204 @@ inline void op_pattern(ull pattern, ostringstream* output_stream) {
   *output_stream << ";";
 }
 
+inline bitset <SZ> get_init_state() {
+
+    bitset <SZ> sta;
+
+    for (int cur = 0; cur < (1 << n); cur++) {
+
+
+    int o = rand() & 255;
+
+    if (o > 100) {
+        int tag = 0;
+        for (int i = 0; i < n; i++) {
+            if ((cur & (1 << i)) && (sta[cur ^ (1 << i)])) {
+            	tag = 1;
+                break;
+            }
+        }
+        if (tag) {
+            sta[cur] = true;
+        } else {
+            sta[cur] = false;
+        }
+    } 
+	else {
+        sta[cur] = true;
+    }
+    }
+    return sta;
+}
+
+
+inline double evaluate(bitset <SZ> sta) {
+  
+	int n1 = 0, n2 = 0;
+    int ac[SZ + 1], rj[SZ + 1];
+    for (int j = 0; j < (1 << n); j++) {
+        if (sta[j]) {
+        	ac[++n1] = j;
+        }
+		else{
+        	rj[++n2] = j;
+        }
+    }
+    
+    double ans = 0.0;
+    for (int j = 1; j <= n1; j++) {
+        for (int k = 1; k <= n2; k++) {
+        	ans += prb[ac[j]][rj[k]];
+        }
+    }
+    return ans;
+}
+
+
+inline bitset <SZ> get_next(bitset <SZ> sta) {
+
+    int pos = rand() & ((1 << n) - 1);
+    int l = 1, r = 0;
+    if (sta[pos]) {
+        sta[pos] = false;
+        que[++r] = pos;
+        while (l <= r) {
+           int p = que[l++];
+           for (int i = 0; i < n; i++) {
+             if (p & (1 << i)) {
+               if (sta[p ^ (1 << i)]) {
+                 sta[p ^ (1 << i)] = false;
+                 que[++r] = (p ^ (1 << i));
+               }
+             }
+           }
+    	}
+        return sta;
+    }
+
+    sta[pos] = true;
+    que[++r] = pos;
+    while (l <= r) {
+        int p = que[l++];
+        for (int i = 0; i < n; i++) {
+           if (!(p & (1 << i))) {
+             if (!sta[p ^ (1 << i)]) {
+               sta[p ^ (1 << i)] = true;
+               que[++r] = (p ^ (1 << i));
+             }
+           }
+        }
+    }
+    return sta;
+}
+
+inline void op_pattern_2(bitset <SZ> pattern, ostringstream* output_stream) {
+
+    *output_stream << "return ";
+    int cnt = 0;
+    if (pattern[0]) {
+        *output_stream << "true;";
+        return;
+    }
+
+    for (int i = 0; i < (1 << n); i++) {
+        if (!pattern[i]) {
+        	continue;
+        }
+        acc[i] = 1;
+        int tag = 0;
+        for (int j = i & (i - 1); j; j = (j - 1) & i) {
+           if (acc[j]) {
+             tag = 1;
+             break;
+           }
+        }
+        if (tag) {
+        	continue;
+        }
+        if (cnt) *output_stream << " || ";
+        cnt++;
+        *output_stream << "(";
+        int cot = 0;
+        for (int j = 0; j < n; j++) {
+        	if (i & (1 << j)) {
+            	if (cot) {
+               	*output_stream << " && ";
+             }
+             cot++;
+             *output_stream << "k[" << j << "]";
+           }
+        }
+        *output_stream << ")";
+    }
+    *output_stream << ";";
+}
+
+void simulated_annealing(ostringstream* output_stream) {
+
+    bitset <SZ> cur_sta, bst_sta, new_sta;
+
+    cur_sta = get_init_state();
+    bst_sta = cur_sta;
+
+    double cur_accuracy = evaluate(cur_sta);
+    double max_accuracy = cur_accuracy;
+
+    srand(233);
+
+    double ts = clock(), T = 1.0;
+
+    double rat = 0.999;
+
+    switch (n) {
+        case 11:
+        	rat = 0.99;
+        	break;
+        case 12:
+           rat = 0.95;
+           break;
+        default:
+           rat = 0.999;
+           break;
+    }
+	
+	while (((double) (clock() - ts)) / CLOCKS_PER_SEC < search_time) {
+
+        T *= rat;
+
+        if (max_accuracy - cur_accuracy > 0.15) {
+           cur_sta = bst_sta;
+           cur_accuracy = max_accuracy;
+        }
+
+
+        new_sta = get_next(cur_sta);
+
+        double tp = evaluate(new_sta);
+
+        if (tp > max_accuracy) {
+			max_accuracy = tp;
+            cur_sta = new_sta;
+            bst_sta = new_sta;
+            continue;
+        }
+
+        double del = tp - cur_accuracy;
+        double prob = exp(del / T);
+        double samp = ((rand() & 32767) + 0.5) / 32768.0;
+
+        if (samp < prob) {
+        	cur_accuracy = tp;
+            cur_sta = new_sta;
+            continue;
+        }
+    }
+
+    op_pattern_2(bst_sta, output_stream);
+    *output_stream << "," << cur_accuracy;
+}
+
+     
 inline void work(int num, double *probs, ostringstream* output_stream) {
   n = num;
 
@@ -143,20 +348,28 @@ inline void work(int num, double *probs, ostringstream* output_stream) {
     }
     prb[na][nb] += prob;
   }
-
-  enumerate(0, 0, output_stream);
-  check();
-  op_pattern(glb_pat, output_stream);
-  *output_stream << "," << glb_maxn;
+  
+  if (n <= 6){
+  	enumerate(0, 0);
+  	check();
+  	op_pattern_1(glb_pat, output_stream);
+  	*output_stream << "," << glb_maxn;
+  }
+  else{
+  	simulated_annealing(output_stream);
+  }
+  	
 }
+
+
 
 char* findWallet(int n, double *p) {
 	
   glb_maxn = -1;
   glb_pat = 0;
   num = 0;
-  for (int i = 0; i < 65; i++){
-  	for (int j = 0; j < 65; j++){
+  for (int i = 0; i < SZ + 1; i++){
+  	for (int j = 0; j < SZ + 1; j++){
   		prb[i][j]=0;
   	}
   	acc[i]=0;
@@ -174,25 +387,6 @@ char* findWallet(int n, double *p) {
 
 }
 
-//int main() {
-//  int n;
-//  double p[5 * N];
-//
-//  scanf("%d", &n);
-//
-//  for (int i = 0; i < n; i++) {
-//    for (int j = 0; j < 4; j++) {
-//      int x;
-//      scanf("%d", &x);
-//      p[4 * i + j] = x;
-//    }
-//  }
-//
-//  printf("%s", findwallet(n, p));
-//  printf("\n");
-//
-//  return 0;
-//}
 
 /*
 
