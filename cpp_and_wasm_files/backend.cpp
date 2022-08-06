@@ -1,5 +1,4 @@
 #include <bitset>
-#include <cstring>
 #include <sstream>
 
 using namespace std;
@@ -156,9 +155,12 @@ char* findWallet(int n, double *p) {
   glb_maxn = -1;
   glb_pat = 0;
   num = 0;
-  memset(prb, 0, sizeof(prb));
-  memset(acc, 0, sizeof(acc));
-  
+  for (int i = 0; i < 65; i++){
+  	for (int j = 0; j < 65; j++){
+  		prb[i][j]=0;
+  	}
+  	acc[i]=0;
+  }
   
   ostringstream *output_stream = new ostringstream();
 
