@@ -56,3 +56,7 @@ Wait a couple of minutes and the changes should be deployed to https://walletdes
 ## Compile the web worker (temporary fix):
 Run this command to get the worker.js compiled by webpack in main.js:
 ```npx webpack-cli ./.\public\worker.js -o public```
+
+# Compile cpp
+
+`em++ --no-entry cpp_and_wasm_files/backend.cpp -o src/solver.mjs -s ENVIRONMENT='web' -s SINGLE_FILE=1 -s EXPORT_NAME='solverModule' -s USE_ES6_IMPORT_META=0 -s EXPORTED_FUNCTIONS="[\"_findWallet\"]" -s EXPORTED_RUNTIME_METHODS="[\"ccall\", \"cwrap\"]" -s TOTAL_MEMORY=268435456 -O3`
