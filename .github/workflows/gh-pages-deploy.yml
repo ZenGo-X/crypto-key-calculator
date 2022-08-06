@@ -4,9 +4,9 @@ name: Deploy React Application
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ gh-pages ]
+    branches: [ gh-pages-deployment ]
   pull_request:
-    branches: [ gh-pages ]
+    branches: [ gh-pages-deployment ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -34,7 +34,7 @@ jobs:
           npm run build --if-present      
       - name: GitHub Pages action
         uses: peaceiris/actions-gh-pages@v3.7.3
-        if: ${{ github.ref == 'refs/heads/gh-pages' }}
+        if: ${{ github.ref == 'refs/heads/gh-pages-deployment' }}
         with:
           deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
-          publish_dir: ./build   
+          publish_dir: .
