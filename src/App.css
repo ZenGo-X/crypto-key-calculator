@@ -9,4 +9,8 @@
 
 input[type='number']{
   width: 50px;
-} 
+}
+
+.deployedModal {
+  width: 90%;
+}

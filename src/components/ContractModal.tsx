@@ -5,14 +5,18 @@ import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEthereum  } from '@fortawesome/free-brands-svg-icons';
+import Confetti from 'react-confetti'
 
 declare let window: any;
 
 function ContractModal(props: any) {
   const [show, setShow] = useState(props.show);
+  const [showResult, setShowResult] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  const handleResultClose = () =>  setShowResult(false);
+  const handleResultShow = () => setShowResult(true);
 
   const [inputs, setInputs] = useState<any>({});
 
@@ -216,13 +220,15 @@ function ContractModal(props: any) {
       const inputKeys = getInputKeys();
       const contract = await factory.deploy(inputKeys);
       setContractAddress(contract.address);
+      setShow(false);
+      setShowResult(true);
     });
   }
 
   return (
     <>
       <Button variant='dark-lavender' onClick={handleShow}>
-        Input keys
+        Input Keys & Deploy
       </Button>
 
       <Modal show={show} onHide={handleClose}>
@@ -233,13 +239,10 @@ function ContractModal(props: any) {
         <Form>
           { createInputs(props.keyNum) }
         </Form>
-        { contractAddress === '' ?
           <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
             <Form.Label>Your wallet code is:</Form.Label>
             <Form.Control as="textarea" rows={10} defaultValue={contractCode}/>
           </Form.Group>
-          :
-          <div>Your wallet is deployed at: {contractAddress}</div>}
         </Modal.Body>
         <Modal.Footer>
           <Button
@@ -248,6 +251,23 @@ function ContractModal(props: any) {
             Compile & Deploy
             <FontAwesomeIcon icon={faEthereum} color='#233447' style={{marginLeft: '5px'}}/>
           </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={showResult} onHide={handleResultClose} size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>Your wallet is deployed!!</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div>
+            <h3>Your wallet is deployed at:</h3>
+            <h3>
+              <a href={`https://goerli.etherscan.io/address/${contractAddress}`} target="_blank">{contractAddress}</a>
+            </h3>
+            <Confetti style={{width: '100%'}}/>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
         </Modal.Footer>
       </Modal>
     </>
