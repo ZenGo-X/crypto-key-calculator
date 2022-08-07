@@ -457,7 +457,7 @@ function App() {
 
   let alertCantComputeOptimalWallet = <div></div>;
   if (showCantComputeOptimalWallet) {
-    alertCantComputeOptimalWallet = <Alert variant="danger" onClose={() => setShowCantComputeOptimalWallet(false)} dismissible>Computing optimal wallet is only available up to 4 keys</Alert>;
+    alertCantComputeOptimalWallet = <Alert variant="danger" onClose={() => setShowCantComputeOptimalWallet(false)} dismissible>Computing semi optimal wallet is only available up to 12 keys</Alert>;
   }
 
   let warnWalletReduced = <div></div>;
