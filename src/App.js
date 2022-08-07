@@ -5,6 +5,7 @@ import Form from 'react-bootstrap/Form';
 import Card from 'react-bootstrap/Card';
 import Alert from 'react-bootstrap/Alert';
 import ZengoLogo from './assets/zengo_logo.svg';
+import ICLogo from './assets/ic3_logo.png';
 import GitHubLogo from './assets/GitHub.png';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { isMobile } from 'react-device-detect';
@@ -618,13 +619,21 @@ function App() {
       />
 
       <h1 style={{ marginLeft: marginHorizontalPx, marginRight: marginHorizontalPx, marginTop: '20px', textAlign: 'center', color: '#2C2F33' }}>
-        Strongly Walletz
+        Wallet Fortress
       </h1>
 
       {cardsContainer}
 
-      <p style={{ textAlign: 'right', marginRight: marginHorizontalPx, marginBottom: '0px', marginTop:'7px' }}>Previously powered by <a href="https://zengo.com/"><img src={ZengoLogo} style={{ height: '6vmin' }} alt="ZenGo" /></a></p>
-      <p style={{ textAlign: 'right', marginRight: marginHorizontalPx }}>code on <a href="https://github.com/Crypto-Wallet-Designer/crypto-key-calculator"><img src={GitHubLogo} style={{ height: '2vmin', marginLeft: '5px' }} alt="Github" /></a></p>
+      <p style={{ textAlign: 'right', marginRight: marginHorizontalPx, marginBottom: '0px', marginTop:'7px' }}>
+        Powered by &nbsp;
+        <a href="https://www.initc3.org/">
+          <img src={ICLogo} style={{ height: '6vmin' }} alt="IC3" />
+        </a>
+        <a href="https://zengo.com/">
+          <img src={ZengoLogo} style={{ height: '6vmin' }} alt="ZenGo" />
+        </a>
+      </p>
+      <p style={{ textAlign: 'right', marginRight: marginHorizontalPx }}>code on <a href="https://github.com/Crypto-Wallet-Designer/"><img src={GitHubLogo} style={{ height: '2vmin', marginLeft: '5px' }} alt="Github" /></a></p>
 
       <div style={{
         width: "100%",
@@ -669,7 +678,12 @@ function App() {
             </a>
           </p>
         </div>
-        <p style={{textAlign: "center"}}>This website is a fork of the original research @ http://walletdesign.dev</p>
+        <p style={{textAlign: "center"}}>
+          This website is a fork of the original research @ &nbsp;
+          <a href="http://walletdesign.dev" target="_blank" rel="noopener noreferrer">
+            http://walletdesign.dev
+          </a>
+        </p>
       </div>
     </div>
   );
