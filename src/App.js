@@ -106,7 +106,7 @@ function App() {
       setOptimalWalletString("()");
     }
     setKeyProbabilityTable(keyProbabilityTable);
-    setKeyNum(keyNum);
+    setKeyNum(keyNum + 1);
   }
 
   function removeKey(index) {
