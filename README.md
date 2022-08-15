@@ -1,7 +1,7 @@
 # Crypto-Wallet Designer
 This app is a calculator that helps you analyze, given a certain crypto wallet key distribution setting, the probability of its failure.
 
-Available online at: https://crypto-wallet-designer.github.io/crypto-key-calculator/
+Available online at: https://crypto-wallet-designer.github.io/
 
 ## Running the app locally
 This is a simple react application.
@@ -21,7 +21,7 @@ Then, in the `docs` directory will be all the files needed to host the applicati
 To host the application locally run `python3 -m http.server` from the `docs` directory.
 
 ## Deploying
-This repo is set up with Github Pages so that production builds of the app that are pushed to the `main` branch are automatically deployed to https://walletdesign.dev.
+This repo is set up with Github Pages so that production builds of the app that are pushed to the `main` branch are automatically deployed to https://crypto-wallet-designer.github.io/crypto-key-calculator/.
 
 First, make sure to test newly added code using:
 ```
@@ -49,9 +49,7 @@ git push
 
 That's it!
 
-Wait a couple of minutes and the changes should be deployed to https://walletdesign.dev
-
-
+Wait a couple of minutes and the changes should be deployed to https://crypto-wallet-designer.github.io/crypto-key-calculator/.
 
 ## Compile the web worker (temporary fix):
 Run this command to get the worker.js compiled by webpack in main.js:
