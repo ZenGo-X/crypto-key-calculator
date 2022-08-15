@@ -645,8 +645,24 @@ function App() {
         <p style={{marginTop: "5vh", textAlign: "center"}}>Created by:</p>
         <div>
           <p style={{textAlign: "center"}}>
+            <a href="https://roibarzur.github.io/" target="_blank" rel="noopener noreferrer">
+              Roi Bar-Zur
+            </a>
+            , &nbsp;
+            <a href="https://zerui-cheng.com/" target="_blank" rel="noopener noreferrer">
+              Zerui Cheng
+            </a>
+            , &nbsp;
             <a href="https://webee.technion.ac.il/people/ittay/" target="_blank" rel="noopener noreferrer">
               Ittay Eyal
+            </a>
+            , &nbsp;
+            <a href="https://github.com/kristian1108" target="_blank" rel="noopener noreferrer">
+              Kristian Gaylord
+            </a>
+            , &nbsp;
+            <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" rel="noopener noreferrer">
+              Shutong Qu
             </a>
             , &nbsp;
             <a href="https://github.com/moh-eulith/" target="_blank" rel="noopener noreferrer">
@@ -655,26 +671,10 @@ function App() {
             , &nbsp;
             <a href="https://github.com/" target="_blank" rel="noopener noreferrer">
               Nicolas Serrano
-            </a>
-            , &nbsp;
-            <a href="https://roibarzur.github.io/" target="_blank" rel="noopener noreferrer">
-              Roi Bar-Zur
-            </a>
+            </a>        
             , &nbsp;
             <a href="https://doris-lessing.github.io/luluzhou.github.io/" target="_blank" rel="noopener noreferrer">
               Lulu Zhou
-            </a>
-            , &nbsp;
-            <a href="https://zerui-cheng.com/" target="_blank" rel="noopener noreferrer">
-              Zerui Cheng
-            </a>
-            , &nbsp;
-            <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" rel="noopener noreferrer">
-              Shutong Qu
-            </a>
-            , &nbsp;
-            <a href="https://github.com/kristian1108" target="_blank" rel="noopener noreferrer">
-              Kristian Gaylord
             </a>
           </p>
         </div>
