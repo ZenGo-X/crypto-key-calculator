@@ -32,7 +32,7 @@ function ContractModal(props: any) {
       content.push(
         <Form.Group className="mb-3" controlId="formBasicEmail" key={'reactKey'+i}>
           <Form.Label>{`Key ${i}:`}</Form.Label>
-          <Form.Control id={i.toString()} onChange={changeInput} type="text" placeholder="Input public addresses" />
+          <Form.Control id={i.toString()} onChange={changeInput} type="text" placeholder="Input public address" />
         </Form.Group>
       );
     }
