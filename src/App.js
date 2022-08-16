@@ -670,7 +670,7 @@ function App() {
               Mohammad Rezaei
             </a>
             , &nbsp;
-            <a href="https://github.com/" target="_blank" rel="noopener noreferrer">
+            <a href="http://twitter.com/NicoSerranoP/" target="_blank" rel="noopener noreferrer">
               Nicolas Serrano
             </a>        
             , &nbsp;
