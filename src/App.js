@@ -482,7 +482,7 @@ function App() {
             <Alert style={{ marginBottom: '0px' }} variant="lavender" onClose={() => setShowSetKeysInfo(false)} dismissible>
               Compute the success rate of a crypto wallet based on the fault probabilities of its keys. <br />
               A wallet is successful if the owner can use it but an adversary can't.<br />
-              Can also automatically create a wallet (optimal up to 6 keys or using simulated annealing up for 6-12 keys), generate a smart contract and deploy to Ethereum.
+              Can also automatically create a wallet (optimal up to 6 keys or using simulated annealing up for 6-12 keys), generate a smart contract and deploy to Ethereum.<br />
               More details <a href="https://techdecsec.github.io/2021-11-16-keyManagement/" style={{ color: '#E6E9FB' }}>here</a>.
               White paper <a href="https://eprint.iacr.org/2021/1522.pdf" style={{ color: '#E6E9FB' }}>here</a>.
               No warranty; <a href="LICENSE" style={{ color: '#E6E9FB' }}>BSD license</a>.
